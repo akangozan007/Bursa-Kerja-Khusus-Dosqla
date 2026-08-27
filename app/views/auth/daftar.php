@@ -4,252 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar - BKK DOSQLA</title>
-    <!-- Memanggil CSS eksternal -->
-    <link rel="stylesheet" href="<?= BASE_URL; ?>css/login.css">
-    <style>
-        :root {
-            --bg-blue: #0257bc;
-            --bg-orange: #ff6000;
-            --btn-blue: #004ecc;
-            --btn-blue-hover: #003db3;
-            --text-dark-blue: #042456;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #03142c;
-            padding: 20px;
-        }
-
-        .login-wrapper {
-            display: flex;
-            width: 100%;
-            max-width: 1050px;
-            height: 600px;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        /* --- SISI KIRI (ORANGE HERO SECTION) --- */
-        .brand-section {
-            flex: 1;
-            background: var(--bg-orange);
-            padding: 45px 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            color: #ffffff;
-            transition: flex 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            overflow: hidden;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            z-index: 5;
-            color: #ffffff;
-        }
-
-        .hero-text {
-            z-index: 5;
-            margin-bottom: 20px;
-        }
-
-        .hero-text .subtitle {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .hero-text h1 {
-            font-size: 2.2rem;
-            line-height: 1.25;
-            color: var(--text-dark-blue);
-            font-weight: 800;
-        }
-
-        .hero-text p.smart-control {
-            font-size: 2.2rem;
-            color: #ffffff;
-            font-weight: 800;
-        }
-
-        .hero-divider {
-            width: 180px;
-            height: 3px;
-            background: rgba(4, 36, 86, 0.5);
-            margin-top: 15px;
-            border-radius: 2px;
-        }
-
-        /* --- SISI KANAN (BLUE FORM SECTION) --- */
-        .form-section {
-            flex: 1;
-            background-color: var(--bg-blue);
-            padding: 45px 65px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            color: #ffffff;
-            transition: flex 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-        }
-
-        .form-section h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--bg-orange);
-            margin-bottom: 25px;
-        }
-
-        .input-group {
-            margin-bottom: 18px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            color: #ffffff;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .input-group input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 500;
-        }
-
-        .input-group input:focus {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 50px;
-            background: var(--bg-orange);
-            color: white;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 0px #b34300, 0 12px 20px rgba(0,0,0,0.25);
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background: #e55600;
-            transform: translateY(-2px);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #ffffff;
-        }
-
-        .login-link a {
-            color: #ffaa77;
-            text-decoration: underline;
-            font-weight: 700;
-        }
-
-        /* --- TOGGLE ARROW BUTTON --- */
-        .center-arrow-container {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 20;
-            pointer-events: none;
-        }
-
-        .center-arrow-btn {
-            pointer-events: auto;
-            width: 65px;
-            height: 65px;
-            background: #ff0044;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        /* --- CANVAS ANIMASI STICKMAN OVERLAY --- */
-        #stickmanCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @media (max-width: 850px) {
-            .login-wrapper { flex-direction: column; height: auto; }
-            .center-arrow-container, #stickmanCanvas { display: none; }
-            .brand-section, .form-section { padding: 40px 30px; }
-        }
-    </style>
+    <!-- Memanggil CSS eksternal utama -->
+    <link rel="stylesheet" href="/Bursa-Kerja-Khusus-Dosqla/public/css/login.css">
 </head>
 <body>
 
 <div class="login-wrapper" id="loginWrapper">
 
-    <!-- CANVAS UNTUK ANIMASI STICKMAN BERJALAN MULUS -->
-    <canvas id="stickmanCanvas"></canvas>
-
     <!-- HERO SECTION (KIRI) -->
     <div class="brand-section">
+        <!-- Logo & Header Brand -->
         <div class="logo-area">
-           <img src="/Bursa-Kerja-Khusus-Dosqla/public/img/logo.png" 
-            alt="Logo BKK DOSQLA" 
-            style="max-height: 40px; width: auto;"
-            onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=LOGO';">
+            <img src="/Bursa-Kerja-Khusus-Dosqla/public/img/logo.png" 
+                 alt="Logo BKK DOSQLA" 
+                 class="logo-img" 
+                 style="max-height: 40px; width: auto; display: block;"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=LOGO';">
             BKK DOSQLA
         </div>
 
@@ -261,13 +31,51 @@
             <div class="hero-divider"></div>
         </div>
 
-        <div style="height: 60px;"><!-- Spaceholder untuk lintasan Stickman --></div>
+        <!-- VEKTOR ANIMATION SHAPES -->
+        <div class="vec-capsule"></div>
+        <div class="vec-circle-top"></div>
+        <div class="vec-grid-top">
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+        </div>
+        <div class="vec-large-circle-left"></div>
+        <div class="vec-cyan-ball"></div>
+        <div class="vec-cross">✕</div>
+        <div class="vec-bottom-ring"></div>
+        <div class="vec-grid-bottom">
+            <div></div><div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div><div></div>
+        </div>
+
+        <!-- SVG ROKET BERKELOK-KELOK -->
+        <div class="rocket-container">
+            <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
+                <path d="M32 4C20 16 16 32 16 44L32 56L48 44C48 32 44 16 32 4Z" fill="#ff4d4d"/>
+                <path d="M32 4C26 16 24 32 24 44L32 50L40 44C40 32 38 16 32 4Z" fill="#e60000"/>
+                <circle cx="32" cy="26" r="6" fill="#03142c" stroke="#ffffff" stroke-width="2"/>
+                <path d="M16 40L6 48L16 52V40Z" fill="#ff9900"/>
+                <path d="M48 40L58 48L48 52V40Z" fill="#ff9900"/>
+                <path d="M26 54L32 64L38 54H26Z" fill="#ffcc00"/>
+            </svg>
+        </div>
+
+        <!-- SVG ASTRONOT TEROMBANG-AMBING -->
+        <div class="astronaut-container">
+            <svg width="50" height="50" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="20" r="14" fill="#ffffff"/>
+                <rect x="22" y="14" width="20" height="12" rx="6" fill="#03142c" stroke="#00a5e3" stroke-width="2"/>
+                <path d="M18 34C18 30 24 28 32 28C40 28 46 30 46 34V48H18V34Z" fill="#ffffff"/>
+                <rect x="26" y="34" width="12" height="8" rx="2" fill="#ff4d4d"/>
+                <circle cx="20" cy="48" r="4" fill="#cccccc"/>
+                <circle cx="44" cy="48" r="4" fill="#cccccc"/>
+            </svg>
+        </div>
     </div>
 
     <!-- TOGGLE BUTTON ARROW (TENGAH) -->
-    <div class="center-arrow-container">
-        <div class="center-arrow-btn">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <div class="center-arrow-container" id="arrowContainer">
+        <div class="center-arrow-btn" id="togglePanelBtn" title="Klik untuk memperlebar / memperkecil panel">
+            <svg id="arrowIcon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
@@ -278,7 +86,19 @@
     <div class="form-section">
         <h2>Daftar</h2>
 
-        <form action="<?= BASE_URL; ?>auth/process_register" method="POST">
+        <!-- Posisikan ini tepat di atas <form action="..."> -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <div style="background-color: #ff4d4d; color: #fff; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
+                <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div style="background-color: #2ec4b6; color: #fff; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
+                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        <form action="<?= BASE_URL; ?>/auth/process_register" method="POST" id="registerForm">
             
             <div class="input-group">
                 <label for="email">Email</label>
@@ -295,140 +115,35 @@
             </div>
 
             <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+
+            <div class="input-group">
                 <label for="instansi">Asal Instansi</label>
                 <div class="input-wrapper">
                     <input type="text" id="instansi" name="instansi" placeholder="Nama instansi" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Daftar</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <span class="spinner" id="btnSpinner"></span>
+                <span id="btnText">Daftar</span>
+            </button>
 
-            <div class="login-link">
-                Sudah punya akun? <a href="<?= BASE_URL; ?>auth/login">Login sekarang</a>
+            <div class="login-link" style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                Sudah punya akun? <a href="<?= BASE_URL; ?>/auth/login" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
             </div>
         </form>
     </div>
 
 </div>
 
-<!-- SCRIPT ANIMASI STICKMAN LENGKAP -->
-<script>
-    const canvas = document.getElementById('stickmanCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function resizeCanvas() {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Variabel Posisi Stickman
-    let xPos = 80;
-    const yPos = canvas.height - 100; // Jalur berjalan di bagian bawah
-    const speed = 1.8;
-    let animFrame = 0;
-
-    function drawStickman(x, y, frame) {
-        const isSuited = x > (canvas.width / 2); // Berubah di area biru (melewati tengah)
-        const walkCycle = Math.sin(frame * 0.12);
-        const legAngle = walkCycle * 0.6;
-        const armAngle = walkCycle * 0.6;
-
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = isSuited ? '#ffffff' : '#042456';
-
-        // 1. KEPALA
-        ctx.beginPath();
-        ctx.arc(x, y - 55, 12, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // HELM SAFETY (Jika sudah di area biru)
-        if (isSuited) {
-            ctx.fillStyle = '#ffcc00'; // Helm Proyek Kuning
-            ctx.beginPath();
-            ctx.arc(x, y - 57, 14, Math.PI, 0); // Tempurung Helm
-            ctx.fill();
-            ctx.fillRect(x - 18, y - 58, 36, 4); // Pet Helm
-        }
-
-        // 2. BADAN
-        ctx.beginPath();
-        ctx.moveTo(x, y - 43);
-        ctx.lineTo(x, y - 15);
-        ctx.stroke();
-
-        // JAS/BAJU KERJA (Area Biru)
-        if (isSuited) {
-            ctx.fillStyle = '#03142c';
-            ctx.fillRect(x - 8, y - 43, 16, 22);
-            // Dasi Merah
-            ctx.fillStyle = '#ff0044';
-            ctx.beginPath();
-            ctx.moveTo(x, y - 43);
-            ctx.lineTo(x - 3, y - 35);
-            ctx.lineTo(x, y - 25);
-            ctx.lineTo(x + 3, y - 35);
-            ctx.fill();
-        }
-
-        // 3. TANGAN
-        // Tangan Kiri
-        ctx.beginPath();
-        ctx.moveTo(x, y - 38);
-        const armLeftX = x + Math.sin(-armAngle) * 20;
-        const armLeftY = y - 20 + Math.cos(-armAngle) * 15;
-        ctx.lineTo(armLeftX, armLeftY);
-        ctx.stroke();
-
-        // Tangan Kanan (Membawa Tas jika di area biru)
-        ctx.beginPath();
-        ctx.moveTo(x, y - 38);
-        const armRightX = x + Math.sin(armAngle) * 20;
-        const armRightY = y - 20 + Math.cos(armAngle) * 15;
-        ctx.lineTo(armRightX, armRightY);
-        ctx.stroke();
-
-        if (isSuited) {
-            // Tas Kerja Cokelat
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(armRightX - 6, armRightY, 14, 12);
-            ctx.strokeStyle = '#5c2d0c';
-            ctx.strokeRect(armRightX - 6, armRightY, 14, 12);
-        }
-
-        // 4. KAKI
-        // Kaki Kiri
-        ctx.beginPath();
-        ctx.moveTo(x, y - 15);
-        ctx.lineTo(x + Math.sin(legAngle) * 22, y + Math.cos(legAngle) * 18);
-        ctx.stroke();
-
-        // Kaki Kanan
-        ctx.beginPath();
-        ctx.moveTo(x, y - 15);
-        ctx.lineTo(x + Math.sin(-legAngle) * 22, y + Math.cos(-legAngle) * 18);
-        ctx.stroke();
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Update Posisi
-        xPos += speed;
-        if (xPos > canvas.width - 60) {
-            xPos = 60; // Reset kembali ke kiri setelah sampai ujung
-        }
-
-        animFrame++;
-        drawStickman(xPos, yPos, animFrame);
-
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-</script>
+<!-- SCRIPT UTAMA PERILAKU INTERAKTIF -->
+<script type="text/javascript" src="/Bursa-Kerja-Khusus-Dosqla/public/js/login.js"></script>
 
 </body>
 </html>

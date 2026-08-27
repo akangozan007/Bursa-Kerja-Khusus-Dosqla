@@ -119,7 +119,7 @@
 
             <!-- TAG TAMBAHAN UNTUK REGISTRASI -->
             <div class="register-link">
-                Belum punya akun? <a target="_blank" href="<?= BASE_URL; ?>/auth/daftar/">Daftar sekarang</a>
+                Belum punya akun? <a target="_blank" href="<?= BASE_URL; ?>/daftar/">Daftar sekarang</a>
             </div>
         </form>
     </div>
