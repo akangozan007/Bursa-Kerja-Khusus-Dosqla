@@ -98,7 +98,7 @@
                 <?= $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
-        <form action="<?= BASE_URL; ?>/auth/process_register" method="POST" id="registerForm">
+        <form action="<?= BASE_URL; ?>daftar/process_register" method="POST" id="registerForm">
             
             <div class="input-group">
                 <label for="email">Email</label>

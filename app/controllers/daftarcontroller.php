@@ -5,48 +5,51 @@ class DaftarController {
     private $userModel;
 
     public function __construct() {
-        require_once ROOT_PATH . 'app/models/User.php';
+        require_once ROOT_PATH . 'app/models/user.php';
         $this->userModel = new User();
     }
 
+    // 1. Form Register User/Pelamar
     public function index() {
         require_once ROOT_PATH . 'app/views/auth/daftar.php';
     }
 
-    public function process_register() {
-        // --- DEBUGGER STEP 1: Cek apakah method POST masuk ---
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            die('[DEBUG 1] Request bukan method POST!');
-        }
+    // 2. Form Register Admin Rahasia (/auth/adminxxx)
+    public function adminxxx() {
+        require_once ROOT_PATH . 'app/views/auth/admin_register.php';
+    }
 
-        // --- DEBUGGER STEP 2: Cek data mentah dari form ---
-        // Un-comment baris di bawah jika ingin melihat isi $_POST langsung
-        // var_dump($_POST); die();
+    // 3. Process Register User
+    public function process_register() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
+        }
 
         $email    = trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));
-        $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS));
-        $password = trim($_POST['password'] ?? '');
-        $instansi = trim(filter_input(INPUT_POST, 'instansi', FILTER_SANITIZE_SPECIAL_CHARS));
+        $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS));$password = trim($_POST['password'] ?? '');$instansi = trim(filter_input(INPUT_POST, 'instansi', FILTER_SANITIZE_SPECIAL_CHARS));
 
-        // --- DEBUGGER STEP 3: Validasi input kosong ---
-        if (empty($email) || empty($username) || empty($password) || empty($instansi)) {
-            die('[DEBUG 3] Ada input yang kosong. Email: '.$email.', User: '.$username.', Instansi: '.$instansi);
+    if (empty($email) || empty($username) || empty($password) || empty($instansi)) {
+            $_SESSION['error'] = 'Semua bidang input wajib diisi!';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            die('[DEBUG 3.1] Format Email tidak valid!');
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {$_SESSION['error'] = 'Format email tidak valid!';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
         }
 
-        // --- DEBUGGER STEP 4: Cek duplikasi di Database ---
-        if ($this->userModel->checkEmailExists($email)) {
-            die('[DEBUG 4] Email sudah terdaftar di database!');
+        if ($this->userModel->checkEmailExists($email)) {$_SESSION['error'] = 'Email sudah terdaftar!';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
         }
 
-        if ($this->userModel->checkUsernameExists($username)) {
-            die('[DEBUG 4] Username sudah terdaftar di database!');
+        if ($this->userModel->checkUsernameExists($username)) {$_SESSION['error'] = 'Username sudah terdaftar!';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
         }
 
-        // Hash Password
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         $data = [
@@ -57,16 +60,63 @@ class DaftarController {
             'role'     => 'pelamar'
         ];
 
-        // --- DEBUGGER STEP 5: Eksekusi Insert & Tangkap PDO Error ---
-        try {
-            $isInserted = $this->userModel->register($data);
-            if ($isInserted) {
-                die('[DEBUG SUCCESS] Data BERHASIL masuk ke database!');
-            } else {
-                die('[DEBUG FAILED] Query jalan tapi gagal insert (execute returns false).');
-            }
-        } catch (PDOException $e) {
-            die('[DEBUG PDO ERROR] Exception caught: ' . $e->getMessage());
+        if ($this->userModel->register($data)) {$_SESSION['success'] = 'Pendaftaran berhasil! Silakan login.';
+            header('Location: ' . BASE_URL . 'auth');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Gagal mendaftar, terjadi kesalahan sistem.';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
         }
     }
-}
+
+    // 4. Process Register Admin
+    public function process_admin_register() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . BASE_URL . 'auth/adminxxx');
+            exit;
+        }
+
+        $email     = trim(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL));$username  = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS));
+        $password  = trim($_POST['password'] ?? '');
+        $secretKey = trim($_POST['secret_key'] ?? '');
+
+        $VALID_ADMIN_KEY = 'DOSQLA2026';
+
+        if ($secretKey !== $VALID_ADMIN_KEY) {$_SESSION['error'] = 'Kode Rahasia Admin Salah!';
+            header('Location: ' . BASE_URL . 'auth/adminxxx');
+            exit;
+        }
+
+        if (empty($email) || empty($username) || empty($password)) {
+            $_SESSION['error'] = 'Semua bidang wajib diisi!';
+            header('Location: ' . BASE_URL . 'auth/adminxxx');
+            exit;
+        }
+
+        if ($this->userModel->checkEmailExists($email) || $this->userModel->checkUsernameExists($username)) {
+            $_SESSION['error'] = 'Email atau Username sudah terdaftar!';
+            header('Location: ' . BASE_URL . 'auth/adminxxx');
+            exit;
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $data = [
+            'email'    => $email,
+            'username' => $username,
+            'password' => $hashedPassword,
+            'instansi' => 'Pengelola BKK',
+            'role'     => 'admin'
+        ];
+
+        if ($this->userModel->register($data)) {$_SESSION['success'] = 'Akun Admin Berhasil Dibuat! Silakan Login.';
+            header('Location: ' . BASE_URL . 'auth');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Gagal mendaftarkan Admin.';
+            header('Location: ' . BASE_URL . 'auth/adminxxx');
+            exit;
+        }
+    }
+} // <--- Jangan lupa kurung penutup kelas ini

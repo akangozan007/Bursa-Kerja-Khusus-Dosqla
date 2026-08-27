@@ -1,7 +1,7 @@
 <?php
-// 1. Penetapan Root Directory & Base URL (Tambahkan trailing slash)
+// 1. Penetapan Root Directory & Base URL
 define('ROOT_PATH', __DIR__ . '/');
-define('BASE_URL', 'http://localhost/Bursa-Kerja-Khusus-Dosqla');
+define('BASE_URL', 'http://localhost/Bursa-Kerja-Khusus-Dosqla/');
 
 session_start();
 
@@ -10,32 +10,52 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Autoload Sederhana
+// Autoload Sederhana (Dengan penanganan lowercase untuk file controller & model)
 spl_autoload_register(function ($class_name) {
-    if (file_exists(ROOT_PATH . 'app/controllers/' . $class_name . '.php')) {
-        require_once ROOT_PATH . 'app/controllers/' . $class_name . '.php';
+    $class_file = strtolower($class_name) . '.php';
+
+    if (file_exists(ROOT_PATH . 'app/controllers/' . $class_file)) {
+        require_once ROOT_PATH . 'app/controllers/' . $class_file;
+    } elseif (file_exists(ROOT_PATH . 'app/models/' . $class_file)) {
+        require_once ROOT_PATH . 'app/models/' . $class_file;
     } elseif (file_exists(ROOT_PATH . 'app/models/' . $class_name . '.php')) {
         require_once ROOT_PATH . 'app/models/' . $class_name . '.php';
-    } elseif (file_exists(ROOT_PATH . 'config/' . $class_name . '.php')) {
-        require_once ROOT_PATH . 'config/' . $class_name . '.php';
+    } elseif (file_exists(ROOT_PATH . 'config/' . $class_file)) {
+        require_once ROOT_PATH . 'config/' . $class_file;
     }
 });
 
-// Parse URL
-$url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'daftar';
-$url = filter_var($url, FILTER_SANITIZE_URL);
-$url = explode('/', $url);
+// 2. Parse & Routing URL
+$rawUrl = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'home';
+$rawUrl = filter_var($rawUrl, FILTER_SANITIZE_URL);
+$url = explode('/', $rawUrl);
 
-// Mapping alias URL (opsional: agar URL /auth/process_register otomatis panggil DaftarController)
-if (strtolower($url[0]) === 'auth') {
-    $url[0] = 'daftar';
+$controllerSegment = strtolower($url[0] ?? 'home');
+$actionSegment     = strtolower($url[1] ?? 'index');
+
+// Mapping Routing Pemisahan Auth, Register Admin, dan Register User
+if ($controllerSegment === 'auth') {
+    if ($actionSegment === 'adminxxx') {
+        // Alias route: /auth/adminxxx -> DaftarController -> adminxxx()
+        $controllerName = 'DaftarController';
+        $method = 'adminxxx';
+    } else {
+        $controllerName = 'AuthController';
+        // /auth atau /auth/login -> AuthController -> index()
+        $method = ($actionSegment === 'login' || $actionSegment === 'index') ? 'index' : $actionSegment;
+    }
+} elseif ($controllerSegment === 'daftar') {
+    $controllerName = 'DaftarController';
+    $method = $actionSegment;
+} else {
+    $controllerName = ucfirst($controllerSegment) . 'Controller';
+    $method = $actionSegment;
 }
 
-// 2. Menentukan Controller
-$controllerName = ucfirst($url[0]) . 'Controller';
+// 3. Menentukan & Load Controller
+$controllerFile = strtolower($controllerName) . '.php';
 
-// Cek apakah file controller ada
-if (!file_exists(ROOT_PATH . 'app/controllers/' . $controllerName . '.php')) {
+if (!file_exists(ROOT_PATH . 'app/controllers/' . $controllerFile)) {
     http_response_code(404);
     if (file_exists(ROOT_PATH . 'app/views/404.php')) {
         require_once ROOT_PATH . 'app/views/404.php';
@@ -47,14 +67,12 @@ if (!file_exists(ROOT_PATH . 'app/controllers/' . $controllerName . '.php')) {
 
 $controller = new $controllerName();
 
-// 3. Menentukan Method
-$method = isset($url[1]) ? $url[1] : 'index';
-
+// 4. Menentukan & Cek Method
 if (!method_exists($controller, $method)) {
     die("Method <strong>{$method}</strong> tidak ditemukan pada controller <strong>{$controllerName}</strong>.");
 }
 
 $params = array_slice($url, 2);
 
-// 4. Jalankan Controller & Method
+// 5. Eksekusi Controller & Method
 call_user_func_array([$controller, $method], $params);
