@@ -4,128 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Admin - BKK DOSQLA</title>
+    <!-- Memanggil CSS eksternal utama menggunakan BASE_URL -->
     <link rel="stylesheet" href="<?= BASE_URL; ?>public/css/login.css">
-    
-    <style>
-        /* Reset wrapper agar centering sempurna di layar */
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* Override kontainer utama agar fleksibel & tidak pernah kelelep */
-        .form-section.admin-card {
-            width: 100%;
-            max-width: 420px;
-            height: auto !important; /* Mencegah tinggi terkunci */
-            min-height: min-content;
-            background-color: #ff5722 !important; /* Warna oranye sesuai screenshot */
-            border-radius: 16px;
-            padding: 35px 28px !important;
-            box-sizing: border-box !important;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-card h2 {
-            color: #111827;
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            margin: 0 0 4px 0;
-        }
-
-        .admin-card .sub-title {
-            text-align: center;
-            color: rgba(0, 0, 0, 0.65); /* Kontras lebih jelas */
-            font-size: 0.875rem;
-            margin-bottom: 24px;
-            font-weight: 500;
-        }
-
-        .admin-card .input-group {
-            margin-bottom: 16px;
-        }
-
-        .admin-card label {
-            display: block;
-            color: #111827;
-            font-weight: 700;
-            font-size: 0.875rem;
-            margin-bottom: 6px;
-        }
-
-        .admin-card input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 25px; /* Sesuai desain membulat di screenshot */
-            border: none;
-            background-color: #ff8a65; /* Oranye muda sesuai gambar */
-            color: #111827;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .admin-card input::placeholder {
-            color: rgba(0, 0, 0, 0.45);
-        }
-
-        /* Merapikan Tombol agar Tetap di Dalam Kontainer Oranye */
-        .admin-card .btn-submit {
-            width: 100%;
-            padding: 13px;
-            background-color: #0d6efd; /* Biru sesuai screenshot */
-            color: #ffffff;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 12px;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-            transition: background 0.2s ease;
-        }
-
-        .admin-card .btn-submit:hover {
-            background-color: #0b5ed7;
-        }
-
-        /* Responsif untuk Layar Smartphone Sempit */
-        @media (max-width: 480px) {
-            .form-section.admin-card {
-                padding: 25px 20px !important;
-            }
-            
-            .admin-card h2 {
-                font-size: 1.6rem;
-            }
-        }
-    </style>
 </head>
 <body>
 
-<div class="login-wrapper">
-    <div class="form-section admin-card">
-        <h2>Admin</h2>
-        <p class="sub-title">Portal Registrasi Pengelola BKK</p>
+<div class="login-wrapper" id="loginWrapper">
+
+    <!-- HERO SECTION (KIRI) -->
+    <div class="brand-section">
+        <!-- Logo & Header Brand -->
+        <div class="logo-area">
+            <img src="<?= BASE_URL; ?>public/img/logo.png" 
+                 alt="Logo BKK DOSQLA" 
+                 class="logo-img" 
+                 style="max-height: 40px; width: auto; display: block;"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=LOGO';">
+            BKK DOSQLA
+        </div>
+
+        <div class="hero-text">
+            <div class="subtitle">PORTAL REGISTRASI PENGELOLA</div>
+            <h1>Kelola Sistem</h1>
+            <h1>Secara Efisien & Aman</h1>
+            <p class="smart-control">Admin Authority Panel</p>
+            <div class="hero-divider"></div>
+        </div>
+
+        <!-- VEKTOR ANIMATION SHAPES -->
+        <div class="vec-capsule"></div>
+        <div class="vec-circle-top"></div>
+        <div class="vec-grid-top">
+            <div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div>
+        </div>
+        <div class="vec-large-circle-left"></div>
+        <div class="vec-cyan-ball"></div>
+        <div class="vec-cross">✕</div>
+        <div class="vec-bottom-ring"></div>
+        <div class="vec-grid-bottom">
+            <div></div><div></div><div></div><div></div><div></div>
+            <div></div><div></div><div></div><div></div><div></div>
+        </div>
+
+        <!-- SVG ROKET BERKELOK-KELOK -->
+        <div class="rocket-container">
+            <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
+                <path d="M32 4C20 16 16 32 16 44L32 56L48 44C48 32 44 16 32 4Z" fill="#ff4d4d"/>
+                <path d="M32 4C26 16 24 32 24 44L32 50L40 44C40 32 38 16 32 4Z" fill="#e60000"/>
+                <circle cx="32" cy="26" r="6" fill="#03142c" stroke="#ffffff" stroke-width="2"/>
+                <path d="M16 40L6 48L16 52V40Z" fill="#ff9900"/>
+                <path d="M48 40L58 48L48 52V40Z" fill="#ff9900"/>
+                <path d="M26 54L32 64L38 54H26Z" fill="#ffcc00"/>
+            </svg>
+        </div>
+
+        <!-- SVG ASTRONOT TEROMBANG-AMBING -->
+        <div class="astronaut-container">
+            <svg width="50" height="50" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="20" r="14" fill="#ffffff"/>
+                <rect x="22" y="14" width="20" height="12" rx="6" fill="#03142c" stroke="#00a5e3" stroke-width="2"/>
+                <path d="M18 34C18 30 24 28 32 28C40 28 46 30 46 34V48H18V34Z" fill="#ffffff"/>
+                <rect x="26" y="34" width="12" height="8" rx="2" fill="#ff4d4d"/>
+                <circle cx="20" cy="48" r="4" fill="#cccccc"/>
+                <circle cx="44" cy="48" r="4" fill="#cccccc"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- TOGGLE BUTTON ARROW (TENGAH) -->
+    <div class="center-arrow-container" id="arrowContainer">
+        <div class="center-arrow-btn" id="togglePanelBtn" title="Klik untuk memperlebar / memperkecil panel">
+            <svg id="arrowIcon" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </div>
+    </div>
+
+    <!-- FORM SECTION (KANAN) -->
+    <div class="form-section">
+        <h2>Daftar Admin</h2>
 
         <?php if (isset($_SESSION['error'])): ?>
-            <div style="background-color: #d32f2f; color: #fff; padding: 10px 14px; border-radius: 8px; margin-bottom: 18px; text-align: center; font-size: 0.85rem; font-weight: 600;">
+            <div style="background-color: #ff4d4d; color: #fff; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
                 <?= $_SESSION['error']; unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
 
-        <form action="<?= BASE_URL; ?>daftar/process_admin_register" method="POST">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div style="background-color: #2ec4b6; color: #fff; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
+                <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?= BASE_URL; ?>daftar/process_admin_register" method="POST" id="adminRegisterForm">
+            
             <div class="input-group">
                 <label for="username">Username Admin</label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" name="username" placeholder="admin" required autocomplete="off">
+                    <input type="text" id="username" name="username" placeholder="Enter admin username" required autocomplete="off">
                 </div>
             </div>
 
@@ -139,7 +117,8 @@
             <div class="input-group">
                 <label for="password">Password</label>
                 <div class="input-wrapper">
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <span class="toggle-password" onclick="togglePassword()">👁️</span>
                 </div>
             </div>
 
@@ -150,10 +129,21 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Daftar Sebagai Admin</button>
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                <span class="spinner" id="btnSpinner"></span>
+                <span id="btnText">Daftar Sebagai Admin</span>
+            </button>
+
+            <div class="login-link" style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                Sudah punya akun? <a href="<?= BASE_URL; ?>auth/login" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
+            </div>
         </form>
     </div>
+
 </div>
+
+<!-- SCRIPT UTAMA PERILAKU INTERAKTIF -->
+<script type="text/javascript" src="<?= BASE_URL; ?>public/js/login.js"></script>
 
 </body>
 </html>

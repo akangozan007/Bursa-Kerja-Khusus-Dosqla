@@ -335,9 +335,12 @@
                         <li class="nav-item">
                             <a class="nav-link nav-link-custom wavy-text" href="artikel">Artikel</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-custom wavy-text" href="auth/login">Daftar | Masuk</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom wavy-text" href="<?= BASE_URL ?>daftar">daftar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom wavy-text" href="<?= BASE_URL ?>auth/login">login</a>
+                    </li>
                     </ul>
                 </div>
             </div>

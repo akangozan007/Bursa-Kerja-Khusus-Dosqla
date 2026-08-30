@@ -33,8 +33,21 @@ $url = explode('/', $rawUrl);
 $controllerSegment = strtolower($url[0] ?? 'home');
 $actionSegment     = strtolower($url[1] ?? 'index');
 
-// Mapping Routing Pemisahan Auth, Register Admin, dan Register User
-if ($controllerSegment === 'auth') {
+// Mapping Routing Pemisahan Auth, Register, Pelamar, dan Controller Lainnya
+if ($controllerSegment === 'login') {
+    // Alias route: /login -> AuthController -> index()
+    $controllerName = 'AuthController';
+    $method = 'index';
+} elseif ($controllerSegment === 'register') {
+    // Alias route: /register -> DaftarController -> index()
+    $controllerName = 'DaftarController';
+    $method = 'index';
+}elseif ($controllerSegment === 'pelamar') {
+    // Route /pelamar akan memanggil PelamarController
+    $controllerName = 'PelamarController';
+    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+}
+elseif ($controllerSegment === 'auth') {
     if ($actionSegment === 'adminxxx') {
         // Alias route: /auth/adminxxx -> DaftarController -> adminxxx()
         $controllerName = 'DaftarController';
@@ -47,6 +60,9 @@ if ($controllerSegment === 'auth') {
 } elseif ($controllerSegment === 'daftar') {
     $controllerName = 'DaftarController';
     $method = $actionSegment;
+} elseif ($controllerSegment === 'logout') {
+    $controllerName = 'LogoutController';
+    $method = 'index';
 } else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;
