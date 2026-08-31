@@ -6,6 +6,9 @@ class DaftarController {
 
     public function __construct() {
         require_once ROOT_PATH . 'app/models/user.php';
+        // 1. Load helper pengiriman email
+        require_once ROOT_PATH . 'app/helper/mail_helper.php';
+        
         $this->userModel = new User();
     }
 
@@ -70,8 +73,8 @@ class DaftarController {
         // Generate & Simpan Kode OTP
         $otpCode = $this->userModel->generateOTP($email);
 
-        // TODO: Kirim $otpCode ke $email menggunakan library mailer (seperti PHPMailer)
-        // mail($email, "Kode OTP BKK DOSQLA", "Kode verifikasi Anda: $otpCode");
+        // 2. Kirim $otpCode ke $email menggunakan helper PHPMailer
+        sendOtpEmail($email, $otpCode);
 
         header('Location: ' . BASE_URL . 'daftar/otp');
         exit;
@@ -86,28 +89,42 @@ class DaftarController {
         require_once ROOT_PATH . 'app/views/auth/otp.php';
     }
 
-    // 5. Process Verifikasi OTP
+// 5. Process Verifikasi OTP
     public function process_otp() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . 'daftar/otp');
             exit;
         }
 
+        // Cek apakah ada data pendaftaran sementara di session
         if (!isset($_SESSION['temp_user'])) {
             $_SESSION['error'] = 'Sesi pendaftaran berakhir, silakan daftar ulang.';
             header('Location: ' . BASE_URL . 'daftar');
             exit;
         }
 
+        // Cek apakah data OTP ada di session
+        if (!isset($_SESSION['otp_data'])) {
+            $_SESSION['error'] = 'Kode OTP tidak ditemukan atau telah kadaluwarsa, silakan daftar ulang.';
+            header('Location: ' . BASE_URL . 'daftar');
+            exit;
+        }
+
+        // Ambil dan bersihkan input OTP dari form
         $inputOtp = trim($_POST['otp_code'] ?? '');
-        $status   = $this->userModel->verifyOTP($inputOtp);
+
+        // Verifikasi kode OTP melalui Model
+        $status = $this->userModel->verifyOTP($inputOtp);
 
         if ($status === true) {
             // OTP Valid -> Simpan user ke Database Permanen
             $userData = $_SESSION['temp_user'];
 
             if ($this->userModel->register($userData)) {
+                // Hapus data temporary session setelah berhasil
                 unset($_SESSION['temp_user']);
+                unset($_SESSION['otp_data']);
+
                 $_SESSION['success'] = 'Verifikasi berhasil! Akun Anda telah aktif, silakan login.';
                 header('Location: ' . BASE_URL . 'auth');
                 exit;
@@ -117,8 +134,8 @@ class DaftarController {
                 exit;
             }
         } elseif ($status === 'expired') {
-            $_SESSION['error'] = 'Kode OTP telah kedaluwarsa. Silakan minta kode baru.';
-            header('Location: ' . BASE_URL . 'daftar/otp');
+            $_SESSION['error'] = 'Kode OTP telah kedaluwarsa. Silakan lakukan pendaftaran ulang.';
+            header('Location: ' . BASE_URL . 'daftar');
             exit;
         } else {
             $_SESSION['error'] = 'Kode OTP tidak cocok!';
@@ -137,7 +154,8 @@ class DaftarController {
         $email = $_SESSION['temp_user']['email'];
         $newOtp = $this->userModel->generateOTP($email);
 
-        // TODO: Kirim ulang $newOtp ke $email via mailer
+        // 3. Kirim ulang $newOtp ke $email via helper PHPMailer
+        sendOtpEmail($email, $newOtp);
 
         $_SESSION['success'] = 'Kode OTP baru telah dikirimkan ke email Anda.';
         header('Location: ' . BASE_URL . 'daftar/otp');

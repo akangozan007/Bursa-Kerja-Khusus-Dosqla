@@ -28,13 +28,18 @@ class User {
 
         $otpData = $_SESSION['otp_data'];
         
+        // Cek kedaluwarsa
         if (time() > $otpData['expires']) {
             unset($_SESSION['otp_data']);
             return 'expired';
         }
 
-        if ($otpData['code'] == $inputOtp) {
-            unset($_SESSION['otp_data']);
+        // Ubah kedua nilai menjadi String dan hilangkan spasi tersembunyi
+        $sessionCode = trim((string)$otpData['code']);
+        $userCode    = trim((string)$inputOtp);
+
+        if ($sessionCode === $userCode) {
+            // Jangan hapus $_SESSION['otp_data'] di sini, biarkan controller yang menghapus setelah register() sukses
             return true;
         }
 
