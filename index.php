@@ -25,15 +25,15 @@ spl_autoload_register(function ($class_name) {
     }
 });
 
-// 2. Parse & Routing URL
-$rawUrl = isset($_GET['url']) ? rtrim($_GET['url'], '/') : 'home';
-$rawUrl = filter_var($rawUrl, FILTER_SANITIZE_URL);
-$url = explode('/', $rawUrl);
+// 2. Parse & Routing URL (Pembersihan URL kompatibel PHP 8.2+)
+$rawUrl = isset($_GET['url']) ? trim($_GET['url'], '/') : 'home';
+$rawUrl = filter_var($rawUrl, FILTER_DEFAULT);
+$url = !empty($rawUrl) ? explode('/', $rawUrl) : ['home'];
 
 $controllerSegment = strtolower($url[0] ?? 'home');
 $actionSegment     = strtolower($url[1] ?? 'index');
 
-// Mapping Routing Pemisahan Auth, Register, Pelamar, dan Controller Lainnya
+// Mapping Routing Pemisahan Auth, Register, Pelamar, Jobs, dan Controller Lainnya
 if ($controllerSegment === 'login') {
     // Alias route: /login -> AuthController -> index()
     $controllerName = 'AuthController';
@@ -42,12 +42,15 @@ if ($controllerSegment === 'login') {
     // Alias route: /register -> DaftarController -> index()
     $controllerName = 'DaftarController';
     $method = 'index';
-}elseif ($controllerSegment === 'pelamar') {
-    // Route /pelamar akan memanggil PelamarController
+} elseif ($controllerSegment === 'pelamar') {
+    // Route /pelamar -> PelamarController
     $controllerName = 'PelamarController';
     $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
-}
-elseif ($controllerSegment === 'auth') {
+} elseif ($controllerSegment === 'jobs') {
+    // Route /jobs -> JobController
+    $controllerName = 'JobController';
+    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+} elseif ($controllerSegment === 'auth') {
     if ($actionSegment === 'adminxxx') {
         // Alias route: /auth/adminxxx -> DaftarController -> adminxxx()
         $controllerName = 'DaftarController';
@@ -83,9 +86,15 @@ if (!file_exists(ROOT_PATH . 'app/controllers/' . $controllerFile)) {
 
 $controller = new $controllerName();
 
-// 4. Menentukan & Cek Method
-if (!method_exists($controller, $method)) {
-    die("Method <strong>{$method}</strong> tidak ditemukan pada controller <strong>{$controllerName}</strong>.");
+// 4. Menentukan & Cek Method (Validasi method publik dan callable)
+if (!method_exists($controller, $method) || !is_callable([$controller, $method])) {
+    http_response_code(404);
+    if (file_exists(ROOT_PATH . 'app/views/404.php')) {
+        require_once ROOT_PATH . 'app/views/404.php';
+    } else {
+        echo "404 - Method <strong>{$method}</strong> tidak ditemukan atau bersifat privat pada controller <strong>{$controllerName}</strong>.";
+    }
+    exit;
 }
 
 $params = array_slice($url, 2);
