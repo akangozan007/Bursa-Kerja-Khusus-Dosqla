@@ -3,16 +3,20 @@ class Job {
     private $db;
 
     public function __construct() {
-        // Sesuaikan dengan koneksi PDO proyek Anda
-        $this->db = new PDO("mysql:host=localhost;dbname=bkk_db", "root", "");
-        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // Hubungkan ke database bkk_db
+        try {
+            $this->db = new PDO("mysql:host=localhost;dbname=bkk_db", "root", "");
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            die("Koneksi gagal: " . $e->getMessage());
+        }
     }
 
     public function getAllJobs() {
         $query = "SELECT * FROM lowongan ORDER BY id DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // WAJIB mereturn array data
     }
 
     public function searchJobs($keyword) {
@@ -21,14 +25,6 @@ class Job {
         $stmt->bindValue(':keyword', '%' . $keyword . '%');
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getJobById($id) {
-        $query = "SELECT * FROM lowongan WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
 ?>
