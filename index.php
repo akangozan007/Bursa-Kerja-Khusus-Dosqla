@@ -33,8 +33,16 @@ $url = !empty($rawUrl) ? explode('/', $rawUrl) : ['home'];
 $controllerSegment = strtolower($url[0] ?? 'home');
 $actionSegment     = strtolower($url[1] ?? 'index');
 
-// Mapping Routing Pemisahan Auth, Register, Pelamar, Jobs, dan Controller Lainnya
-if ($controllerSegment === 'login') {
+// Mapping Routing Pemisahan Admin, Applicant, Auth, Register, dll.
+if ($controllerSegment === 'admin') {
+    // Route /admin -> AdminController -> index() / method terkait
+    $controllerName = 'AdminController';
+    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+} elseif ($controllerSegment === 'applicant') {
+    // Route /applicant -> ApplicantController -> index() / dashboard / method terkait
+    $controllerName = 'ApplicantController';
+    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+} elseif ($controllerSegment === 'login') {
     // Alias route: /login -> AuthController -> index()
     $controllerName = 'AuthController';
     $method = 'index';
@@ -43,7 +51,7 @@ if ($controllerSegment === 'login') {
     $controllerName = 'DaftarController';
     $method = 'index';
 } elseif ($controllerSegment === 'pelamar') {
-    // Route /pelamar -> PelamarController
+    // Route /pelamar -> PelamarController (atau redirect ke applicant)
     $controllerName = 'PelamarController';
     $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
 } elseif ($controllerSegment === 'jobs') {
@@ -64,8 +72,8 @@ if ($controllerSegment === 'login') {
     $controllerName = 'DaftarController';
     $method = $actionSegment;
 } elseif ($controllerSegment === 'logout') {
-    $controllerName = 'LogoutController';
-    $method = 'index';
+    $controllerName = 'AuthController';
+    $method = 'logout';
 } else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;

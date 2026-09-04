@@ -87,3 +87,7 @@ Untuk mengimplementasikan fitur OTP via email (Gmail) sebelum data tersimpan ke 
 
 sandi
 ckcw uwqt oyyl gewz
+
+url daftar admin    : http://localhost/Bursa-Kerja-Khusus-Dosqla/auth/adminxxx
+Redirect ke url : 
+url daftar pelamar  : http://localhost/Bursa-Kerja-Khusus-Dosqla/daftar

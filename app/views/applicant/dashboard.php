@@ -1,32 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pelamar - BKK DOSQLA</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-
-    <nav class="bg-blue-600 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-3">
-                    <!-- BASE_URL untuk Gambar Logo -->
-                    <img src="<?= BASE_URL ?>public/img/logo.png" alt="Logo BKK" class="h-9 w-auto">
-                    <span class="font-bold text-xl tracking-wide">BKK DOSQLA</span>
-                </div>
-                <div class="flex items-center space-x-4 text-sm font-medium">
-                    <!-- BASE_URL untuk Link Navigation -->
-                    <a href="<?= BASE_URL ?>jobs" class="hover:bg-blue-700 px-3 py-2 rounded-lg transition">Cari Lowongan</a>
-                    <a href="<?= BASE_URL ?>pelamar" class="bg-blue-800 px-3 py-2 rounded-lg">Riwayat Lamaran</a>
-                    <a href="<?= BASE_URL ?>applicant/profile" class="hover:bg-blue-700 px-3 py-2 rounded-lg transition">Profil Saya</a>
-                    <a href="<?= BASE_URL ?>logout" class="bg-orange-500 hover:bg-orange-600 px-3 py-2 rounded-lg transition font-semibold">Keluar</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<?php 
+$pageTitle = "Dashboard Pelamar - BKK DOSQLA";
+$allowedRole = "pelamar"; // Proteksi agar halaman ini hanya bisa dibuka oleh pelamar
+require_once ROOT_PATH . 'app/views/ekstra/header.php'; 
+?>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         

@@ -94,7 +94,8 @@
             <div class="input-group">
                 <label for="username">Username/Email</label>
                 <div class="input-wrapper">
-                    <input type="text" id="username" name="username" placeholder="Enter your email" required autocomplete="off">
+                    <!-- SESUAIKAN MENJADI (BENAR) -->
+                    <input type="text" id="username" name="login_input" placeholder="Enter your email or username" required autocomplete="off">
                 </div>
             </div>
 
