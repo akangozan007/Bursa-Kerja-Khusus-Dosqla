@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar - BKK DOSQLA</title>
     <!-- Memanggil CSS eksternal utama -->
-    <link rel="stylesheet" href="/Bursa-Kerja-Khusus-Dosqla/public/css/login.css">
+    <link rel="stylesheet" href="<?= BASE_URL; ?>public/css/login.css">
 </head>
 <body>
 
@@ -15,7 +15,7 @@
     <div class="brand-section">
         <!-- Logo & Header Brand -->
         <div class="logo-area">
-            <img src="/Bursa-Kerja-Khusus-Dosqla/public/img/logo.png" 
+            <img src="<?= BASE_URL; ?>public/img/logo.png" 
                  alt="Logo BKK DOSQLA" 
                  class="logo-img" 
                  style="max-height: 40px; width: auto; display: block;"
@@ -86,7 +86,6 @@
     <div class="form-section">
         <h2>Daftar</h2>
 
-        <!-- Posisikan ini tepat di atas <form action="..."> -->
         <?php if (isset($_SESSION['error'])): ?>
             <div style="background-color: #ff4d4d; color: #fff; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;">
                 <?= $_SESSION['error']; unset($_SESSION['error']); ?>
@@ -98,7 +97,9 @@
                 <?= $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
-        <form action="<?= BASE_URL; ?>daftar/process_register" method="POST" id="registerForm">
+
+        <!-- UPDATED FORM ACTION -->
+        <form action="<?= BASE_URL; ?>pelamar/process_register" method="POST" id="registerForm">
             
             <div class="input-group">
                 <label for="email">Email</label>
@@ -135,7 +136,7 @@
             </button>
 
             <div class="login-link" style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Sudah punya akun? <a href="<?= BASE_URL; ?>/auth/login" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
+                Sudah punya akun? <a href="<?= BASE_URL; ?>auth" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
             </div>
         </form>
     </div>
@@ -143,7 +144,7 @@
 </div>
 
 <!-- SCRIPT UTAMA PERILAKU INTERAKTIF -->
-<script type="text/javascript" src="/Bursa-Kerja-Khusus-Dosqla/public/js/login.js"></script>
+<script type="text/javascript" src="<?= BASE_URL; ?>public/js/login.js"></script>
 
 </body>
 </html>

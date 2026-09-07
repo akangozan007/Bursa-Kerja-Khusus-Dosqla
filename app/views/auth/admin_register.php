@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Admin - BKK DOSQLA</title>
-    <!-- CSS Utama & FontAwesome untuk icon modal -->
     <link rel="stylesheet" href="<?= BASE_URL; ?>public/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* Modern OTP Modal Styles */
         .modal-otp-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -118,7 +116,6 @@
     <div class="form-section">
         <h2>Daftar Admin</h2>
 
-        <!-- Alert Container -->
         <div id="alertBox" style="display: none; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-size: 0.9rem;"></div>
 
         <form id="adminRegisterForm" onsubmit="handleRequestOtp(event)">
@@ -150,7 +147,7 @@
             </button>
 
             <div class="login-link" style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
-                Sudah punya akun? <a href="<?= BASE_URL; ?>auth/login" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
+                Sudah punya akun? <a href="<?= BASE_URL; ?>auth" style="color: #ffaa77; font-weight: 700; text-decoration: underline;">Login sekarang</a>
             </div>
         </form>
     </div>
@@ -194,7 +191,6 @@
     </div>
 </div>
 
-<!-- SCRIPT JS INTERAKTIF & HANDLER OTP AJAX -->
 <script type="text/javascript" src="<?= BASE_URL; ?>public/js/login.js"></script>
 <script>
     const BASE_URL = "<?= BASE_URL; ?>";
@@ -208,14 +204,12 @@
         box.innerText = message;
     }
 
-    // Helper untuk menangani parse JSON aman jika ada output tak diinginkan dari PHP
     async function safeParseJson(response) {
         const rawText = await response.text();
         try {
             return JSON.parse(rawText);
         } catch (e) {
             console.error("Raw response server:", rawText);
-            // Mencoba mengekstrak blok JSON saja jika ada text/warning tambahan dari backend
             const jsonMatch = rawText.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
                 return JSON.parse(jsonMatch[0]);
@@ -224,7 +218,7 @@
         }
     }
 
-    // Step 1: Kirim data admin -> Minta Kode OTP & Tampilkan Modal
+    // Step 1: Request OTP Admin -> admin/send_admin_otp
     async function handleRequestOtp(event) {
         event.preventDefault();
         
@@ -240,7 +234,7 @@
         const formData = new FormData(document.getElementById('adminRegisterForm'));
 
         try {
-            const response = await fetch(BASE_URL + 'daftar/send_admin_otp', {
+            const response = await fetch(BASE_URL + 'admin/send_admin_otp', {
                 method: 'POST',
                 body: formData
             });
@@ -250,22 +244,20 @@
             if (result.status === 'success') {
                 document.getElementById('targetEmailDisplay').innerText = emailVal;
                 
-                // AKTIFKAN MODAL OTP
                 const otpModal = document.getElementById('otpModal');
                 otpModal.classList.add('active');
                 
-                // Auto Focus ke input OTP pertama
                 setTimeout(() => {
                     document.querySelectorAll('.otp-field')[0].focus();
                 }, 100);
 
-                startOtpTimer(300); // 5 Menit
+                startOtpTimer(300);
             } else {
                 showAlert('alertBox', result.message || 'Gagal mengirim OTP.', true);
             }
         } catch (error) {
             console.error(error);
-            showAlert('alertBox', 'Gagal memproses respon server. Cek console browser.', true);
+            showAlert('alertBox', 'Gagal memproses respon server.', true);
         } finally {
             btnSubmit.disabled = false;
             if(btnSpinner) btnSpinner.style.display = 'none';
@@ -273,7 +265,6 @@
         }
     }
 
-    // Navigasi Otomatis Input OTP
     function moveOtpFocus(current, currentIndex, event) {
         if (event.key === "Backspace") return;
         if (current.value.length >= 1) {
@@ -293,7 +284,6 @@
         }
     }
 
-    // Timer Penghitung Mundur
     function startOtpTimer(seconds) {
         clearInterval(timerInterval);
         const timerDisplay = document.getElementById('otpTimer');
@@ -315,7 +305,7 @@
         }, 1000);
     }
 
-    // Step 2: Verifikasi OTP & Redireksi ke Login
+    // Step 2: Verify OTP Admin -> admin/verify_admin_otp
     async function handleVerifyOtp(event) {
         event.preventDefault();
 
@@ -328,13 +318,11 @@
             return;
         }
 
-        const emailVal = document.getElementById('email').value;
         const verifyData = new FormData();
-        verifyData.append('email', emailVal);
         verifyData.append('otp_code', otpCode);
 
         try {
-            const response = await fetch(BASE_URL + 'daftar/verify_admin_otp', {
+            const response = await fetch(BASE_URL + 'admin/verify_admin_otp', {
                 method: 'POST',
                 body: verifyData
             });
@@ -342,9 +330,9 @@
             const result = await safeParseJson(response);
 
             if (result.status === 'success') {
-                showAlert('modalAlertBox', 'Registrasi Admin Berhasil! Memindahkan halaman...', false);
+                showAlert('modalAlertBox', result.message || 'Verifikasi Berhasil!', false);
                 setTimeout(() => {
-                    window.location.href = BASE_URL + 'auth/login';
+                    window.location.href = result.redirect || (BASE_URL + 'admin');
                 }, 1500);
             } else {
                 showAlert('modalAlertBox', result.message || 'Kode OTP Salah / Kadaluarsa.', true);
@@ -355,16 +343,11 @@
         }
     }
 
-    // Kirim Ulang OTP
+    // Step 3: Resend OTP Admin -> admin/resend_admin_otp
     async function resendOtpCode() {
-        const emailVal = document.getElementById('email').value;
-        const formData = new FormData();
-        formData.append('email', emailVal);
-
         try {
-            const response = await fetch(BASE_URL + 'daftar/resend_admin_otp', {
-                method: 'POST',
-                body: formData
+            const response = await fetch(BASE_URL + 'admin/resend_admin_otp', {
+                method: 'POST'
             });
 
             const result = await safeParseJson(response);

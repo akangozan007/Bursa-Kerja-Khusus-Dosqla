@@ -3,29 +3,52 @@
 class AuthController {
 
     private $userModel;
+    private $jobModel;
 
     public function __construct() {
         require_once ROOT_PATH . 'app/models/user.php';
+        require_once ROOT_PATH . 'app/models/job.php';
+
         $this->userModel = new User();
+        $this->jobModel  = new Job();
     }
 
-    /**
-     * Halaman Utama Login / Pengecekan Sesi Aktif
-     */
+    // Halaman Utam / Landing Page Publik
+    public function home() {
+        $jobs = $this->jobModel->getAllJobs();
+
+        $data = [
+            'title' => 'BKK DOSQLA - SMK Muhammadiyah Lemahabang',
+            'jobs'  => $jobs
+        ];
+
+        require_once ROOT_PATH . 'app/views/home.php';
+    }
+
+    // Pencarian & Daftar Lowongan Publik (/auth/jobs)
+    public function jobs() {
+        $keyword = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+        if (!empty($keyword)) {
+            $jobs = $this->jobModel->searchJobs($keyword);
+        } else {
+            $jobs = $this->jobModel->getAllJobs();
+        }
+
+        require_once ROOT_PATH . 'app/views/jobs/index.php';
+    }
+
+    // Halaman Form Login Publik
     public function index() {
-        // 1. Cek jika user SUDAH LOGIN, langsung alihkan sesuai role-nya
         if ($this->isLoggedIn()) {
             $this->redirectBasedOnRole();
             exit;
         }
 
-        // 2. Jika belum login, tampilkan halaman form login
         require_once ROOT_PATH . 'app/views/auth/login.php';
     }
 
-    /**
-     * Proses Verifikasi Login (POST Request)
-     */
+    // Eksekusi Login
     public function process_login() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ' . BASE_URL . 'auth');
@@ -41,25 +64,23 @@ class AuthController {
             exit;
         }
 
-        // Autentikasi user dari database melalui UserModel
         $user = $this->userModel->login($emailOrUsername, $password);
 
         if ($user) {
-            // Cek status keaktifan akun (jika ada fitur blokir/non-aktif)
             if (isset($user['status_aktif']) && $user['status_aktif'] == 0) {
                 $_SESSION['error'] = 'Akun Anda telah dinonaktifkan. Silakan hubungi admin.';
                 header('Location: ' . BASE_URL . 'auth');
                 exit;
             }
 
-            // Simpan data login utama ke session
+            $role = strtolower($user['role']);
+
             $_SESSION['user_id']   = $user['id'];
             $_SESSION['username']  = $user['username'];
             $_SESSION['email']     = $user['email'];
-            $_SESSION['role']      = strtolower($user['role']); // 'admin' atau 'pelamar'
+            $_SESSION['role']      = $role; 
 
-            // Simpan session spesifik role agar kompatibel dengan view yang ada
-            if ($_SESSION['role'] === 'admin') {
+            if ($role === 'admin') {
                 $_SESSION['user_admin'] = [
                     'id'       => $user['id'],
                     'username' => $user['username'],
@@ -71,11 +92,10 @@ class AuthController {
                     'id'       => $user['id'],
                     'username' => $user['username'],
                     'email'    => $user['email'],
-                    'role'     => 'pelamar'
+                    'role'     => $role
                 ];
             }
 
-            // REDIREKSI SESUAI ROLE
             $this->redirectBasedOnRole();
             exit;
 
@@ -86,42 +106,50 @@ class AuthController {
         }
     }
 
-    /**
-     * Helper Private Function: Redireksi berdasarkan Role Sesi
-     */
+    // Proses Logout
+    public function logout() {
+        $_SESSION = array();
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION['success'] = 'Anda telah berhasil keluar.';
+        header('Location: ' . BASE_URL . 'auth');
+        exit;
+    }
+
     private function redirectBasedOnRole() {
         $role = $_SESSION['role'] ?? '';
 
         if ($role === 'admin') {
-            header('Location: ' . BASE_URL . 'admin/');
+            header('Location: ' . BASE_URL . 'admin');
             exit;
         } elseif ($role === 'pelamar' || $role === 'applicant') {
-            header('Location: ' . BASE_URL . 'applicant/dashboard');
+            header('Location: ' . BASE_URL . 'pelamar');
             exit;
         } else {
-            // Fallback jika role tidak terdefinisi
             header('Location: ' . BASE_URL);
             exit;
         }
     }
 
-    /**
-     * Helper Private Function: Cek status login
-     */
     private function isLoggedIn() {
         return isset($_SESSION['user_id']) && isset($_SESSION['role']);
-    }
-
-    /**
-     * Proses Logout
-     */
-    public function logout() {
-        session_unset();
-        session_destroy();
-        
-        session_start();
-        $_SESSION['success'] = 'Anda telah berhasil keluar.';
-        header('Location: ' . BASE_URL . 'auth');
-        exit;
     }
 }

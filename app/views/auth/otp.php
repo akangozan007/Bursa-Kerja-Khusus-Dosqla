@@ -22,7 +22,8 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?= BASE_URL; ?>daftar/process_otp" method="POST">
+        <!-- UPDATED FORM ACTION -->
+        <form action="<?= BASE_URL; ?>pelamar/process_otp" method="POST">
             <div class="input-group">
                 <label for="otp_code" style="text-align: center;">Kode OTP</label>
                 <div class="input-wrapper">
@@ -33,6 +34,11 @@
 
             <button type="submit" class="btn-submit" style="margin-top: 15px;">Verifikasi</button>
         </form>
+        
+        <div style="text-align: center; margin-top: 15px; font-size: 0.85rem;">
+            Tidak menerima kode? 
+            <a href="<?= BASE_URL; ?>pelamar/resend_otp" style="color: #00a5e3; font-weight: 700;">Kirim Ulang</a>
+        </div>
     </div>
 </div>
 

@@ -1,3 +1,4 @@
+
 <?php
 // 1. Penetapan Root Directory & Base URL
 define('ROOT_PATH', __DIR__ . '/');
@@ -33,47 +34,52 @@ $url = !empty($rawUrl) ? explode('/', $rawUrl) : ['home'];
 $controllerSegment = strtolower($url[0] ?? 'home');
 $actionSegment     = strtolower($url[1] ?? 'index');
 
-// Mapping Routing Pemisahan Admin, Applicant, Auth, Register, dll.
+// Mapping Routing Pemisahan Admin, Pelamar, & Auth
 if ($controllerSegment === 'admin') {
-    // Route /admin -> AdminController -> index() / method terkait
+    // Route /admin -> AdminController
     $controllerName = 'AdminController';
     $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
-} elseif ($controllerSegment === 'applicant') {
-    // Route /applicant -> ApplicantController -> index() / dashboard / method terkait
-    $controllerName = 'ApplicantController';
+
+} elseif ($controllerSegment === 'pelamar' || $controllerSegment === 'applicant') {
+    // Route /pelamar atau /applicant -> PelamarController
+    $controllerName = 'PelamarController';
     $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+
+} elseif ($controllerSegment === 'daftar' || $controllerSegment === 'register') {
+    // Alias route: /daftar atau /register -> PelamarController -> daftar() / method terkait
+    $controllerName = 'PelamarController';
+    $method = ($actionSegment === 'index') ? 'daftar' : $actionSegment;
+
+} elseif ($controllerSegment === 'home') {
+    // Route /home -> AuthController -> home()
+    $controllerName = 'AuthController';
+    $method = 'home';
+
+} elseif ($controllerSegment === 'jobs') {
+    // Route /jobs -> AuthController -> jobs()
+    $controllerName = 'AuthController';
+    $method = 'jobs';
+
 } elseif ($controllerSegment === 'login') {
     // Alias route: /login -> AuthController -> index()
     $controllerName = 'AuthController';
     $method = 'index';
-} elseif ($controllerSegment === 'register') {
-    // Alias route: /register -> DaftarController -> index()
-    $controllerName = 'DaftarController';
-    $method = 'index';
-} elseif ($controllerSegment === 'pelamar') {
-    // Route /pelamar -> PelamarController (atau redirect ke applicant)
-    $controllerName = 'PelamarController';
-    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
-} elseif ($controllerSegment === 'jobs') {
-    // Route /jobs -> JobController
-    $controllerName = 'JobController';
-    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+
+} elseif ($controllerSegment === 'logout') {
+    // Alias route: /logout -> AuthController -> logout()
+    $controllerName = 'AuthController';
+    $method = 'logout';
+
 } elseif ($controllerSegment === 'auth') {
     if ($actionSegment === 'adminxxx') {
-        // Alias route: /auth/adminxxx -> DaftarController -> adminxxx()
-        $controllerName = 'DaftarController';
+        // Alias route: /auth/adminxxx -> AdminController -> adminxxx()
+        $controllerName = 'AdminController';
         $method = 'adminxxx';
     } else {
         $controllerName = 'AuthController';
-        // /auth atau /auth/login -> AuthController -> index()
         $method = ($actionSegment === 'login' || $actionSegment === 'index') ? 'index' : $actionSegment;
     }
-} elseif ($controllerSegment === 'daftar') {
-    $controllerName = 'DaftarController';
-    $method = $actionSegment;
-} elseif ($controllerSegment === 'logout') {
-    $controllerName = 'AuthController';
-    $method = 'logout';
+
 } else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;
@@ -109,3 +115,4 @@ $params = array_slice($url, 2);
 
 // 5. Eksekusi Controller & Method
 call_user_func_array([$controller, $method], $params);
+

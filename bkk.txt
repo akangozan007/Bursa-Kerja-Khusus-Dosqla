@@ -88,6 +88,54 @@ Untuk mengimplementasikan fitur OTP via email (Gmail) sebelum data tersimpan ke 
 sandi
 ckcw uwqt oyyl gewz
 
-url daftar admin    : http://localhost/Bursa-Kerja-Khusus-Dosqla/auth/adminxxx
-Redirect ke url : 
-url daftar pelamar  : http://localhost/Bursa-Kerja-Khusus-Dosqla/daftar
+1. Halaman Autentikasi & Publik (AuthController)
+
+Beranda / Landing Page: http://localhost/Bursa-Kerja-Khusus-Dosqla/ atau http://localhost/Bursa-Kerja-Khusus-Dosqla/home
+
+Daftar Lowongan Kerja: http://localhost/Bursa-Kerja-Khusus-Dosqla/jobs
+
+Halaman Login: http://localhost/Bursa-Kerja-Khusus-Dosqla/auth atau http://localhost/Bursa-Kerja-Khusus-Dosqla/login
+
+Proses Login: http://localhost/Bursa-Kerja-Khusus-Dosqla/auth/process_login
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/admin (Jika role Admin)
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar (Jika role Pelamar)
+
+Proses Logout: http://localhost/Bursa-Kerja-Khusus-Dosqla/logout atau http://localhost/Bursa-Kerja-Khusus-Dosqla/auth/logout
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/auth
+
+2. Halaman & Alur Registrasi Pelamar (PelamarController)
+
+URL Daftar Pelamar: http://localhost/Bursa-Kerja-Khusus-Dosqla/daftar atau http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/daftar
+
+Proses Form Daftar: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/process_register
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/otp
+
+Halaman Form OTP: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/otp
+
+Proses Verifikasi OTP: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/process_otp
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/auth (Setelah sukses verifikasi)
+
+Kirim Ulang OTP: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/resend_otp
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar/otp
+
+Dashboard Pelamar: http://localhost/Bursa-Kerja-Khusus-Dosqla/pelamar
+
+3. Halaman & Alur Registrasi Admin (AdminController)
+
+URL Daftar Admin: http://localhost/Bursa-Kerja-Khusus-Dosqla/auth/adminxxx
+
+Endpoint Request OTP (AJAX): http://localhost/Bursa-Kerja-Khusus-Dosqla/admin/send_admin_otp
+
+Endpoint Verifikasi OTP (AJAX): http://localhost/Bursa-Kerja-Khusus-Dosqla/admin/verify_admin_otp
+
+Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/admin (Sistem mengarahkan otomatis via Javascript)
+
+Endpoint Kirim Ulang OTP (AJAX): http://localhost/Bursa-Kerja-Khusus-Dosqla/admin/resend_admin_otp
+
+Dashboard Admin: `

@@ -39,7 +39,6 @@ class User {
         $userCode    = trim((string)$inputOtp);
 
         if ($sessionCode === $userCode) {
-            // Jangan hapus $_SESSION['otp_data'] di sini, biarkan controller yang menghapus setelah register() sukses
             return true;
         }
 
@@ -76,5 +75,25 @@ class User {
         $stmt->bindParam(':role', $data['role']);
 
         return $stmt->execute();
+    }
+
+    // --- METHOD LOGIN DITAMBAHKAN DI SINI ---
+    public function login($emailOrUsername, $password) {
+        $query = "SELECT * FROM users WHERE email = :input OR username = :input LIMIT 1";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':input', $emailOrUsername);
+        $stmt->execute();
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            // Menggunakan password_verify (sesuai standar hashing PHP)
+            if (password_verify($password, $user['password'])) {
+                return $user;
+            }
+        }
+
+        return false;
     }
 }
