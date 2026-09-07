@@ -1,6 +1,7 @@
 <?php 
 // Include file header dari folder ekstra
-require_once APPROOT . '/views/ekstra/header.php'; 
+// require_once APPROOT . '/views/ekstra/header.php'; 
+require_once ROOT_PATH . 'app/views/ekstra/header.php';
 ?>
 
 <!-- SIDEBAR NAVIGATION -->
