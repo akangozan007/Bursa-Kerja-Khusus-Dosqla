@@ -3,7 +3,7 @@ class AdminModel {
     private $db;
 
     public function __construct() {
-        // Koneksi ke Database bkk_db
+        // Koneksi ke Database bkk_db sesuai SQL Dump
         $this->db = new PDO("mysql:host=localhost;dbname=bkk_db", "root", "");
     }
 
@@ -17,20 +17,34 @@ class AdminModel {
         return $stats;
     }
 
-    // --- MANAJEMEN LOWONGAN (Sesuai Tabel `lowongan`) ---
-    public function getAllJobs() {
-        // Alias disesuaikan agar cocok dengan $job['judul'], $job['kategori'], $job['tanggal_tutup'] pada dashboard.php
-        $sql = "SELECT 
-                    id, 
-                    judul, 
-                    perusahaan AS kategori, 
-                    'Full Time' AS tipe, 
-                    created_at AS tanggal_tutup, 
-                    'open' AS status 
-                FROM lowongan 
-                ORDER BY id DESC";
-        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
+    // --- MANAJEMEN LOWONGAN (Skema Tabel `lowongan`: id, judul, deskripsi, perusahaan, created_at) ---
+        // --- MANAJEMEN LOWONGAN ---
+
+            public function getAllJobs() {
+                // Memastikan kunci 'tanggal_tutup', 'kategori', dan 'tipe' selalu terdefinisi
+                $sql = "SELECT 
+                            id, 
+                            judul, 
+                            deskripsi,
+                            perusahaan,
+                            COALESCE(perusahaan, 'Umum') AS kategori, 
+                            'Full Time' AS tipe, 
+                            created_at AS tanggal_tutup, 
+                            'open' AS status 
+                        FROM lowongan 
+                        ORDER BY id DESC";
+                
+                $jobs = $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+                // Memastikan setiap row memiliki array key 'tanggal_tutup' jika bernilai NULL
+                foreach ($jobs as &$job) {
+                    if (!isset($job['tanggal_tutup']) || empty($job['tanggal_tutup'])) {
+                        $job['tanggal_tutup'] = $job['created_at'] ?? '-';
+                    }
+                }
+
+                return $jobs;
+            }
 
     public function createJob($data) {
         $stmt = $this->db->prepare("INSERT INTO lowongan (judul, deskripsi, perusahaan) VALUES (?, ?, ?)");
