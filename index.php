@@ -47,17 +47,21 @@ if ($controllerSegment === 'admin') {
         $method = 'kelolaUser';
     } elseif ($actionSegment === 'update-status-pelamar' || $actionSegment === 'updatestatuspelamar') {
         $method = 'updateStatusPelamar';
+    } elseif ($actionSegment === 'toggle-user-status') {
+        $method = 'toggle_user_status';
+    } elseif ($actionSegment === 'reset-user-password') {
+        $method = 'reset_user_password';
     } else {
         $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
     }
 
 } elseif ($controllerSegment === 'pelamar' || $controllerSegment === 'applicant') {
-    // Route /pelamar atau /applicant -> PelamarController
+    // Route /pelamar/profile -> PelamarController -> profile()
     $controllerName = 'PelamarController';
     $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
 
 } elseif ($controllerSegment === 'daftar' || $controllerSegment === 'register') {
-    // Alias route: /daftar atau /register -> PelamarController -> daftar() / method terkait
+    // Alias route: /daftar atau /register -> PelamarController -> daftar()
     $controllerName = 'PelamarController';
     $method = ($actionSegment === 'index') ? 'daftar' : $actionSegment;
 
@@ -66,10 +70,10 @@ if ($controllerSegment === 'admin') {
     $controllerName = 'AuthController';
     $method = 'home';
 
-} elseif ($controllerSegment === 'jobs') {
-    // Route /jobs -> AuthController -> jobs()
+} elseif ($controllerSegment === 'jobs' || $controllerSegment === 'job') {
+    // Route /jobs atau /job -> AuthController -> jobs()
     $controllerName = 'AuthController';
-    $method = 'jobs';
+    $method = ($actionSegment === 'index' || empty($actionSegment)) ? 'jobs' : $actionSegment;
 
 } elseif ($controllerSegment === 'login') {
     // Alias route: /login -> AuthController -> index()
@@ -83,7 +87,6 @@ if ($controllerSegment === 'admin') {
 
 } elseif ($controllerSegment === 'auth') {
     if ($actionSegment === 'adminxxx') {
-        // Alias route: /auth/adminxxx -> AdminController -> adminxxx()
         $controllerName = 'AdminController';
         $method = 'adminxxx';
     } else {
@@ -91,24 +94,7 @@ if ($controllerSegment === 'admin') {
         $method = ($actionSegment === 'login' || $actionSegment === 'index') ? 'index' : $actionSegment;
     }
 
-} elseif ($controllerSegment === 'admin') {
-    $controllerName = 'AdminController';
-    
-    // Normalisasi action segment
-    if ($actionSegment === 'kelola-pelamar') {
-        $method = 'kelolaPelamar';
-    } elseif ($actionSegment === 'kelola-lowongan') {
-        $method = 'kelolaLowongan';
-    } elseif ($actionSegment === 'kelola-user') {
-        $method = 'kelolaUser';
-    } elseif ($actionSegment === 'toggle-user-status') {
-        $method = 'toggle_user_status';
-    } elseif ($actionSegment === 'reset-user-password') {
-        $method = 'reset_user_password';
-    } else {
-        $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
-    }
-}else {
+} else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;
 }

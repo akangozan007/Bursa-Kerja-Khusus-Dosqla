@@ -29,6 +29,58 @@ class PelamarController {
         }
     }
 
+    // Halaman Profil Pelamar & Update Data (/pelamar/profile)
+    public function profile() {
+        // 1. Validasi Autentikasi Login
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . 'auth');
+            exit;
+        }
+
+        // 2. Akses Hanya Untuk Role Pelamar
+        if (isset($_SESSION['role']) && $_SESSION['role'] !== 'pelamar') {
+            header('Location: ' . BASE_URL . 'admin');
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+
+        // 3. Proses Update Profil jika Form di-submit (POST)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $updateData = [
+                'user_id'             => $userId,
+                'nama_lengkap'        => trim(filter_input(INPUT_POST, 'nama_lengkap', FILTER_SANITIZE_SPECIAL_CHARS)),
+                'no_telepon'          => trim(filter_input(INPUT_POST, 'no_telepon', FILTER_SANITIZE_SPECIAL_CHARS)),
+                'alamat'              => trim(filter_input(INPUT_POST, 'alamat', FILTER_SANITIZE_SPECIAL_CHARS)),
+                'pendidikan_terakhir' => trim(filter_input(INPUT_POST, 'pendidikan_terakhir', FILTER_SANITIZE_SPECIAL_CHARS))
+            ];
+
+            // Panggil method update dari userModel
+            if (method_exists($this->userModel, 'updateProfile') && $this->userModel->updateProfile($updateData)) {
+                $_SESSION['success'] = 'Profil berhasil diperbarui!';
+            } else {
+                $_SESSION['error'] = 'Gagal memperbarui profil.';
+            }
+
+            header('Location: ' . BASE_URL . 'pelamar/profile');
+            exit;
+        }
+
+        // 4. Ambil Data Profil User dari Model
+        $pelamarData = method_exists($this->userModel, 'getProfileByUserId') 
+            ? $this->userModel->getProfileByUserId($userId) 
+            : [];
+
+        // 5. Muat View Profil
+        if (file_exists(ROOT_PATH . 'app/views/applicant/profile.php')) {
+            require_once ROOT_PATH . 'app/views/applicant/profile.php';
+        } elseif (file_exists(ROOT_PATH . 'app/views/pelamar/profile.php')) {
+            require_once ROOT_PATH . 'app/views/pelamar/profile.php';
+        } else {
+            echo "File view <strong>profile.php</strong> belum tersedia.";
+        }
+    }
+
     // Tampilkan Form Registrasi Pelamar (/pelamar/daftar)
     public function daftar() {
         require_once ROOT_PATH . 'app/views/auth/daftar.php';
