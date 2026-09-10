@@ -368,4 +368,23 @@ class AdminController {
         }
         exit;
     }
+    // ==========================================
+    // MANAJEMEN USER & ALUMNI
+    // ==========================================
+
+    // Route: /admin/kelola-user
+    public function kelolaUser() {
+        $allowedRole = 'admin';
+        $pageTitle   = 'Kelola User & Alumni - BKK DOSQLA';
+
+        // Ambil seluruh data user dari model
+        $users = method_exists($this->userModel, 'getAllUsers') 
+            ? $this->userModel->getAllUsers() 
+            : [];
+
+        // Load Views
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
+        require_once ROOT_PATH . 'app/views/admin/kelola_user.php';
+        require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+    }
 }

@@ -96,4 +96,22 @@ class User {
 
         return false;
     }
+    // Ambil semua user
+    public function getAllUsers() {
+        $stmt = $this->db->prepare("SELECT * FROM users ORDER BY id DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Ubah status user (active / blocked)
+    public function updateUserStatus($user_id, $status) {
+        $stmt = $this->db->prepare("UPDATE users SET status = :status WHERE id = :id");
+        return $stmt->execute([':status' => $status, ':id' => $user_id]);
+    }
+
+    // Reset password user
+    public function resetPassword($user_id, $new_password_hash) {
+        $stmt = $this->db->prepare("UPDATE users SET password = :password WHERE id = :id");
+        return $stmt->execute([':password' => $new_password_hash, ':id' => $user_id]);
+    }
 }

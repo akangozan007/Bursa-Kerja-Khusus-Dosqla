@@ -91,7 +91,24 @@ if ($controllerSegment === 'admin') {
         $method = ($actionSegment === 'login' || $actionSegment === 'index') ? 'index' : $actionSegment;
     }
 
-} else {
+} elseif ($controllerSegment === 'admin') {
+    $controllerName = 'AdminController';
+    
+    // Normalisasi action segment
+    if ($actionSegment === 'kelola-pelamar') {
+        $method = 'kelolaPelamar';
+    } elseif ($actionSegment === 'kelola-lowongan') {
+        $method = 'kelolaLowongan';
+    } elseif ($actionSegment === 'kelola-user') {
+        $method = 'kelolaUser';
+    } elseif ($actionSegment === 'toggle-user-status') {
+        $method = 'toggle_user_status';
+    } elseif ($actionSegment === 'reset-user-password') {
+        $method = 'reset_user_password';
+    } else {
+        $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+    }
+}else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;
 }

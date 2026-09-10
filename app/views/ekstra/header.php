@@ -24,8 +24,9 @@ if (isset($allowedRole)) {
     }
 }
 
-// Deteksi segmen URL untuk menandai link aktif
-$currentUrl = $_GET['url'] ?? 'admin';
+// Deteksi & pembersihan URL untuk pengecekan menu aktif
+$rawUrl = $_GET['url'] ?? 'admin';
+$cleanUrl = strtolower(trim($rawUrl, '/'));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -48,18 +49,17 @@ $currentUrl = $_GET['url'] ?? 'admin';
     <!-- Google Font (Inter & Plus Jakarta Sans) -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- jQuery JS CDN (Wajib untuk DataTables) -->
+    <!-- jQuery JS CDN -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- DataTables Core & Integration JS CDN -->
+    <!-- DataTables JS CDN -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-    <!-- Custom Futuristic Styling untuk DataTables & UI Component -->
     <style>
         body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
         
@@ -149,30 +149,35 @@ $currentUrl = $_GET['url'] ?? 'admin';
 
                 <!-- Navigasi Menu Admin -->
                 <div class="flex items-center space-x-1 sm:space-x-2 text-sm font-medium">
+                    <!-- 1. Dashboard -->
                     <a href="<?= BASE_URL ?>admin" 
-                       class="<?= ($currentUrl === 'admin' || $currentUrl === 'admin/index') ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
+                       class="<?= ($cleanUrl === 'admin' || $cleanUrl === 'admin/index') ? 'bg-white/20 text-white font-bold shadow-sm' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-chart-pie"></i>
                         <span>Dashboard</span>
                     </a>
 
+                    <!-- 2. Kelola Lowongan -->
                     <a href="<?= BASE_URL ?>admin/kelola-lowongan" 
-                       class="<?= strpos($currentUrl, 'kelola-lowongan') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
+                       class="<?= strpos($cleanUrl, 'kelola-lowongan') !== false ? 'bg-white/20 text-white font-bold shadow-sm' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-briefcase"></i>
                         <span>Kelola Lowongan</span>
                     </a>
 
+                    <!-- 3. Kelola Pelamar -->
                     <a href="<?= BASE_URL ?>admin/kelola-pelamar" 
-                       class="<?= strpos($currentUrl, 'kelola-pelamar') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
+                       class="<?= strpos($cleanUrl, 'kelola-pelamar') !== false ? 'bg-white/20 text-white font-bold shadow-sm' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-id-card"></i>
                         <span>Kelola Pelamar</span>
                     </a>
 
+                    <!-- 4. Kelola User -->
                     <a href="<?= BASE_URL ?>admin/kelola-user" 
-                       class="<?= strpos($currentUrl, 'kelola-user') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
+                       class="<?= strpos($cleanUrl, 'kelola-user') !== false ? 'bg-white/20 text-white font-bold shadow-sm' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-users-gear"></i>
                         <span>Kelola User</span>
                     </a>
 
+                    <!-- Logout -->
                     <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2 no-underline">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
                     </a>
@@ -201,9 +206,9 @@ $currentUrl = $_GET['url'] ?? 'admin';
 
                 <!-- Navigasi Menu Pelamar -->
                 <div class="flex items-center space-x-2 sm:space-x-4 text-sm font-medium">
-                    <a href="<?= BASE_URL ?>jobs" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 no-underline text-white">Cari Lowongan</a>
-                    <a href="<?= BASE_URL ?>pelamar" class="bg-white/20 px-3 py-2 rounded-lg shadow-inner no-underline text-white">Riwayat Lamaran</a>
-                    <a href="<?= BASE_URL ?>pelamar/profile" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 no-underline text-white">Profil Saya</a>
+                    <a href="<?= BASE_URL ?>jobs" class="<?= ($cleanUrl === 'jobs') ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Cari Lowongan</a>
+                    <a href="<?= BASE_URL ?>pelamar" class="<?= ($cleanUrl === 'pelamar' || $cleanUrl === 'pelamar/index') ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Riwayat Lamaran</a>
+                    <a href="<?= BASE_URL ?>pelamar/profile" class="<?= strpos($cleanUrl, 'profile') !== false ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Profil Saya</a>
                     <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2 no-underline">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
                     </a>
