@@ -1,4 +1,3 @@
-
 <?php
 // 1. Penetapan Root Directory & Base URL
 define('ROOT_PATH', __DIR__ . '/');
@@ -38,7 +37,19 @@ $actionSegment     = strtolower($url[1] ?? 'index');
 if ($controllerSegment === 'admin') {
     // Route /admin -> AdminController
     $controllerName = 'AdminController';
-    $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+    
+    // Normalisasi action segment (Menangani URL berkebab-case)
+    if ($actionSegment === 'kelola-pelamar') {
+        $method = 'kelolaPelamar';
+    } elseif ($actionSegment === 'kelola-lowongan') {
+        $method = 'kelolaLowongan';
+    } elseif ($actionSegment === 'kelola-user') {
+        $method = 'kelolaUser';
+    } elseif ($actionSegment === 'update-status-pelamar' || $actionSegment === 'updatestatuspelamar') {
+        $method = 'updateStatusPelamar';
+    } else {
+        $method = ($actionSegment === 'index') ? 'index' : $actionSegment;
+    }
 
 } elseif ($controllerSegment === 'pelamar' || $controllerSegment === 'applicant') {
     // Route /pelamar atau /applicant -> PelamarController
@@ -115,4 +126,3 @@ $params = array_slice($url, 2);
 
 // 5. Eksekusi Controller & Method
 call_user_func_array([$controller, $method], $params);
-

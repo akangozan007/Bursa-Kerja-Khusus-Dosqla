@@ -138,4 +138,6 @@ Redirect ke: http://localhost/Bursa-Kerja-Khusus-Dosqla/admin (Sistem mengarahka
 
 Endpoint Kirim Ulang OTP (AJAX): http://localhost/Bursa-Kerja-Khusus-Dosqla/admin/resend_admin_otp
 
+kelola pelamar : http://localhost/Bursa-Kerja-Khusus-Dosqla/admin/kelola-pelamar
+
 Dashboard Admin: `

@@ -23,6 +23,9 @@ if (isset($allowedRole)) {
         exit;
     }
 }
+
+// Deteksi segmen URL untuk menandai link aktif
+$currentUrl = $_GET['url'] ?? 'admin';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -48,7 +51,7 @@ if (isset($allowedRole)) {
     <!-- jQuery JS CDN (Wajib untuk DataTables) -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- Bootstrap 5 JS Bundle CDN (Termasuk Popper.js untuk Modal, Dropdown, & Tooltip) -->
+    <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- DataTables Core & Integration JS CDN -->
@@ -60,14 +63,12 @@ if (isset($allowedRole)) {
     <style>
         body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
         
-        /* Futuristic Glassmorphism Navbar Fix */
         .glass-nav {
             background: rgba(37, 99, 235, 0.92) !important;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Custom Styling DataTables agar Tampil Modern & Ciamik */
         .dataTables_wrapper .dataTables_paginate .paginate_button.active .page-link {
             background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
             border-color: #2563eb !important;
@@ -138,33 +139,41 @@ if (isset($allowedRole)) {
             <div class="flex items-center justify-between h-16">
                 
                 <!-- Logo & Brand Admin -->
-                <div class="flex items-center gap-3">
+                <a href="<?= BASE_URL ?>admin" class="flex items-center gap-3 no-underline text-white">
                     <img src="<?= BASE_URL ?>public/img/logo.png" alt="Logo BKK" class="h-9 w-auto drop-shadow" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=BKK';">
                     <div>
                         <span class="font-extrabold text-xl tracking-wide block leading-none">BKK DOSQLA</span>
                         <span class="text-[10px] text-blue-200 font-semibold tracking-wider uppercase">Admin Panel</span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Navigasi Menu Admin -->
-                <div class="flex items-center space-x-1 sm:space-x-3 text-sm font-medium">
-                    <button onclick="switchTab('dashboard', this)" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                <div class="flex items-center space-x-1 sm:space-x-2 text-sm font-medium">
+                    <a href="<?= BASE_URL ?>admin" 
+                       class="<?= ($currentUrl === 'admin' || $currentUrl === 'admin/index') ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-chart-pie"></i>
                         <span>Dashboard</span>
-                    </button>
-                    <button onclick="switchTab('jobs', this)" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                    </a>
+
+                    <a href="<?= BASE_URL ?>admin/kelola-lowongan" 
+                       class="<?= strpos($currentUrl, 'kelola-lowongan') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-briefcase"></i>
                         <span>Kelola Lowongan</span>
-                    </button>
-                    <button onclick="switchTab('applicants', this)" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                    </a>
+
+                    <a href="<?= BASE_URL ?>admin/kelola-pelamar" 
+                       class="<?= strpos($currentUrl, 'kelola-pelamar') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-id-card"></i>
                         <span>Kelola Pelamar</span>
-                    </button>
-                    <button onclick="switchTab('users', this)" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2">
+                    </a>
+
+                    <a href="<?= BASE_URL ?>admin/kelola-user" 
+                       class="<?= strpos($currentUrl, 'kelola-user') !== false ? 'bg-white/20 text-white font-semibold' : 'hover:bg-white/10 text-white/90' ?> px-3 py-2 rounded-lg transition duration-150 flex items-center gap-2 no-underline">
                         <i class="fa-solid fa-users-gear"></i>
                         <span>Kelola User</span>
-                    </button>
-                    <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2">
+                    </a>
+
+                    <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2 no-underline">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
                     </a>
                 </div>
@@ -185,17 +194,17 @@ if (isset($allowedRole)) {
             <div class="flex items-center justify-between h-16">
                 
                 <!-- Logo & Title -->
-                <div class="flex items-center gap-3">
+                <a href="<?= BASE_URL ?>jobs" class="flex items-center gap-3 no-underline text-white">
                     <img src="<?= BASE_URL ?>public/img/logo.png" alt="Logo BKK" class="h-9 w-auto drop-shadow" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=BKK';">
                     <span class="font-extrabold text-xl tracking-wide">BKK DOSQLA</span>
-                </div>
+                </a>
 
                 <!-- Navigasi Menu Pelamar -->
                 <div class="flex items-center space-x-2 sm:space-x-4 text-sm font-medium">
-                    <a href="<?= BASE_URL ?>jobs" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150">Cari Lowongan</a>
-                    <a href="<?= BASE_URL ?>pelamar" class="bg-white/20 px-3 py-2 rounded-lg shadow-inner">Riwayat Lamaran</a>
-                    <a href="<?= BASE_URL ?>pelamar/profile" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150">Profil Saya</a>
-                    <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2">
+                    <a href="<?= BASE_URL ?>jobs" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 no-underline text-white">Cari Lowongan</a>
+                    <a href="<?= BASE_URL ?>pelamar" class="bg-white/20 px-3 py-2 rounded-lg shadow-inner no-underline text-white">Riwayat Lamaran</a>
+                    <a href="<?= BASE_URL ?>pelamar/profile" class="hover:bg-white/10 px-3 py-2 rounded-lg transition duration-150 no-underline text-white">Profil Saya</a>
+                    <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2 no-underline">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
                     </a>
                 </div>

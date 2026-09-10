@@ -11,7 +11,6 @@ class AdminController {
         }
 
         // Keamanan: Cek Session Login & Role Admin untuk aksi internal
-        // (Diabaikan hanya untuk method pendaftaran admin)
         $action = $_GET['url'] ?? '';
         $isRegisterAction = strpos($action, 'send_admin_otp') !== false || 
                             strpos($action, 'verify_admin_otp') !== false || 
@@ -19,8 +18,8 @@ class AdminController {
                             strpos($action, 'adminxxx') !== false;
 
         if (!$isRegisterAction) {
-            if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-                header('Location: ' . BASE_URL . 'auth');
+            if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_admin'])) {
+                header('Location: ' . BASE_URL . 'login');
                 exit;
             }
         }
@@ -37,21 +36,16 @@ class AdminController {
     // DASHBOARD & UTAMA
     // ==========================================
 
-    // Menampilkan Halaman Dashboard Panel Admin
-        public function index() {
-                // Cek Session Admin (Opsional)
-                // if (!isset($_SESSION['user_admin'])) {
-                //     header('Location: ' . BASE_URL . 'auth/login');
-                //     exit;
-                // }
+    public function index() {
+        $allowedRole = 'admin';
+        $pageTitle   = 'Dashboard Admin - BKK DOSQLA';
 
-                // Fetch Data dari Model
+        // Fetch Data dari Model
         $jobs        = method_exists($this->jobModel, 'getAllJobs') ? $this->jobModel->getAllJobs() : [];
         $applicants  = method_exists($this->jobModel, 'getAllApplicants') ? $this->jobModel->getAllApplicants() : [];
         $users       = method_exists($this->userModel, 'getAllUsers') ? $this->userModel->getAllUsers() : [];
         $recentApps  = method_exists($this->jobModel, 'getRecentApplications') ? $this->jobModel->getRecentApplications() : [];
 
-        // Sesuaikan Kunci Array dengan variabel yang dipanggil di dashboard.php
         $data = [
             'total_jobs_active'      => count($jobs),
             'total_applicants'       => count($applicants),
@@ -63,13 +57,74 @@ class AdminController {
             'users_list'             => $users
         ];
 
-        // PANGGUL LANGSUNG DASHBOARD.PHP (Bukan index.php)
-         require_once ROOT_PATH . 'app/views/admin/dashboard.php';
+        require_once ROOT_PATH . 'app/views/admin/dashboard.php';
     }
 
     // Form Khusus Registrasi Admin (/admin/adminxxx atau /auth/adminxxx)
     public function adminxxx() {
         require_once ROOT_PATH . 'app/views/auth/admin_register.php';
+    }
+
+    // ==========================================
+    // HALAMAN & MANAJEMEN PELAMAR
+    // ==========================================
+
+    // Route: /admin/kelola-pelamar
+    public function kelolaPelamar() {
+        $allowedRole = 'admin';
+        $pageTitle   = 'Kelola Pelamar & Lamaran - BKK DOSQLA';
+
+        // Ambil daftar pelamar dari model
+        $applicants = method_exists($this->jobModel, 'getAllApplicants') 
+            ? $this->jobModel->getAllApplicants() 
+            : [];
+
+        // Load Views
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
+        require_once ROOT_PATH . 'app/views/admin/kelola_pelamar.php';
+        require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+    }
+
+    // Action Handler: /admin/update-status-pelamar (Form POST & AJAX)
+    public function updateStatusPelamar() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id_lamaran = filter_input(INPUT_POST, 'id_lamaran', FILTER_VALIDATE_INT) 
+                       ?? filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+            $status     = trim($_POST['status'] ?? '');
+
+            if ($id_lamaran && !empty($status)) {
+                $updated = false;
+
+                if (method_exists($this->jobModel, 'updateApplicantStatus')) {
+                    $updated = $this->jobModel->updateApplicantStatus($id_lamaran, $status);
+                } elseif (method_exists($this->jobModel, 'updateApplicationStatus')) {
+                    $updated = $this->jobModel->updateApplicationStatus($id_lamaran, $status);
+                }
+
+                if ($updated) {
+                    $_SESSION['success'] = "Status lamaran berhasil diperbarui!";
+                } else {
+                    $_SESSION['error'] = "Gagal memperbarui status lamaran di database.";
+                }
+            } else {
+                $_SESSION['error'] = "Data status atau ID lamaran tidak valid.";
+            }
+        }
+
+        // Respon JSON jika dipanggil via AJAX
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            if (ob_get_length()) ob_clean();
+            header('Content-Type: application/json');
+            echo json_encode([
+                'status'  => isset($_SESSION['success']) ? 'success' : 'error',
+                'message' => $_SESSION['success'] ?? $_SESSION['error']
+            ]);
+            unset($_SESSION['success'], $_SESSION['error']);
+            exit;
+        }
+
+        header("Location: " . BASE_URL . "admin/kelola-pelamar");
+        exit;
     }
 
     // ==========================================
@@ -213,17 +268,17 @@ class AdminController {
             exit;
         }
 
-        $id            = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        $title         = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS));
-        $company       = trim(filter_input(INPUT_POST, 'company', FILTER_SANITIZE_SPECIAL_CHARS));
-        $description   = trim($_POST['description'] ?? '');
-        $qualifications= trim($_POST['qualifications'] ?? '');
-        $open_date     = trim($_POST['open_date'] ?? '');
-        $close_date    = trim($_POST['close_date'] ?? '');
-        $status        = trim($_POST['status'] ?? 'open');
+        $id             = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $title          = trim(filter_input(INPUT_POST, 'title', FILTER_SANITIZE_SPECIAL_CHARS));
+        $company        = trim(filter_input(INPUT_POST, 'company', FILTER_SANITIZE_SPECIAL_CHARS));
+        $description    = trim($_POST['description'] ?? '');
+        $qualifications = trim($_POST['qualifications'] ?? '');
+        $open_date      = trim($_POST['open_date'] ?? '');
+        $close_date     = trim($_POST['close_date'] ?? '');
+        $status         = trim($_POST['status'] ?? 'open');
 
-        if (empty($title) || empty($company) || empty($open_date) || empty($close_date)) {
-            echo json_encode(['status' => 'error', 'message' => 'Form bertanda bintang wajib diisi!']);
+        if (empty($title) || empty($company)) {
+            echo json_encode(['status' => 'error', 'message' => 'Judul dan nama perusahaan wajib diisi!']);
             exit;
         }
 
@@ -272,31 +327,6 @@ class AdminController {
     }
 
     // ==========================================
-    // MANAJEMEN PELAMAR & LAMARAN
-    // ==========================================
-
-    public function update_status_pelamar() {
-        if (ob_get_length()) ob_clean();
-        header('Content-Type: application/json');
-
-        $app_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        $status = trim($_POST['status'] ?? '');
-
-        $allowedStatus = ['proses', 'lolos', 'tidak_lolos'];
-        if (!$app_id || !in_array($status, $allowedStatus)) {
-            echo json_encode(['status' => 'error', 'message' => 'Parameter tidak valid.']);
-            exit;
-        }
-
-        if ($this->jobModel->updateApplicantStatus($app_id, $status)) {
-            echo json_encode(['status' => 'success', 'message' => 'Status pelamar berhasil diperbarui!']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Gagal mengupdate status pelamar.']);
-        }
-        exit;
-    }
-
-    // ==========================================
     // MANAJEMEN USER & ALUMNI
     // ==========================================
 
@@ -305,7 +335,7 @@ class AdminController {
         header('Content-Type: application/json');
 
         $user_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
-        $status  = trim($_POST['status'] ?? ''); // 'active' atau 'blocked'
+        $status  = trim($_POST['status'] ?? ''); 
 
         if (!$user_id || !in_array($status, ['active', 'blocked'])) {
             echo json_encode(['status' => 'error', 'message' => 'Data user tidak valid.']);
