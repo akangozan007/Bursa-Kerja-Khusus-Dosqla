@@ -2,29 +2,67 @@
 class Job {
     private $db;
 
-    public function __construct() {
-        // Hubungkan ke database bkk_db
-        try {
-            $this->db = new PDO("mysql:host=localhost;dbname=bkk_db", "root", "");
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            die("Koneksi gagal: " . $e->getMessage());
+    public function __construct($dbConnection = null) {
+        if ($dbConnection) {
+            $this->db = $dbConnection;
+        } else {
+            try {
+                $this->db = new PDO("mysql:host=localhost;dbname=bkk_db;charset=utf8mb4", "root", "", [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+                ]);
+            } catch (PDOException $e) {
+                die("Koneksi Database Gagal: " . $e->getMessage());
+            }
         }
     }
 
+    // Ambil semua data lowongan
     public function getAllJobs() {
-        $query = "SELECT * FROM lowongan ORDER BY id DESC";
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->db->prepare("SELECT * FROM lowongan ORDER BY id DESC");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // WAJIB mereturn array data
+        return $stmt->fetchAll();
     }
 
-    public function searchJobs($keyword) {
-        $query = "SELECT * FROM lowongan WHERE judul LIKE :keyword OR perusahaan LIKE :keyword ORDER BY id DESC";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindValue(':keyword', '%' . $keyword . '%');
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Ambil single lowongan berdasarkan ID
+    public function getJobById($id) {
+        $stmt = $this->db->prepare("SELECT * FROM lowongan WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+
+    // Tambah lowongan baru
+    public function createJob($data) {
+        $sql = "INSERT INTO lowongan (judul, perusahaan, deskripsi) 
+                VALUES (:judul, :perusahaan, :deskripsi)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':judul'      => $data['judul'] ?? $data['title'] ?? '',
+            ':perusahaan' => $data['perusahaan'] ?? $data['company'] ?? '',
+            ':deskripsi'  => $data['deskripsi'] ?? $data['description'] ?? null
+        ]);
+    }
+
+    // Update lowongan
+    public function updateJob($id, $data) {
+        $sql = "UPDATE lowongan SET 
+                    judul = :judul, 
+                    perusahaan = :perusahaan, 
+                    deskripsi = :deskripsi 
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'         => $id,
+            ':judul'      => $data['judul'] ?? $data['title'] ?? '',
+            ':perusahaan' => $data['perusahaan'] ?? $data['company'] ?? '',
+            ':deskripsi'  => $data['deskripsi'] ?? $data['description'] ?? null
+        ]);
+    }
+
+    // Hapus lowongan
+    public function deleteJob($id) {
+        $stmt = $this->db->prepare("DELETE FROM lowongan WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
     }
 }
 ?>

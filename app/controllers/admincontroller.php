@@ -387,4 +387,25 @@ class AdminController {
         require_once ROOT_PATH . 'app/views/admin/kelola_user.php';
         require_once ROOT_PATH . 'app/views/ekstra/footer.php';
     }
+
+    // ==========================================
+    // MANAJEMEN LOWONGAN (CRUD JOB)
+    // ==========================================
+
+    // Route: /admin/kelola-lowongan
+    public function kelolaLowongan() {
+        $allowedRole = 'admin';
+        $pageTitle   = 'Kelola Lowongan Kerja - BKK DOSQLA';
+
+        // Fetch data seluruh lowongan dari model
+        $jobs = method_exists($this->jobModel, 'getAllJobs') 
+            ? $this->jobModel->getAllJobs() 
+            : [];
+
+        // Load Views
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
+        require_once ROOT_PATH . 'app/views/admin/kelola_lowongan.php';
+        require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+    }
+    
 }
