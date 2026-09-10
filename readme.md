@@ -1,83 +1,42 @@
-Bursa-Kerja-Khusus-Dosqla/
-├── .htaccess                   # Routing URL ke index.php
-├── index.php                   # Root Entry Point (Router & Dispatcher)
-├── config/
-│   └── database.php            # Koneksi MySQLi / PDO
-├── app/
-│   ├── controllers/
-│   │   ├── HomeController.php
-│   │   ├── AuthController.php
-│   │   └── JobController.php
-│   ├── models/
-│   │   ├── User.php
-│   │   └── Job.php
-│   └── views/
-│       ├── templates/
-│       │   ├── header.php
-│       │   └── footer.php
-│       ├── home.php            # Halaman Landing BKK DOSQLA
-│       └── jobs.php
-└── public/
-    ├── css/
-    ├── js/
-    └── uploads/                # Bukti bayar & CV
+# 🚀 BKK DOSQLA - Bursa Kerja Khusus SMK Muhammadiyah Lemahabang
 
+![BKK DOSQLA Homepage Banner](ai_2.jpg)
 
-Berdasarkan struktur MVC yang ada, berikut adalah rincian fitur utama yang idealnya tersedia untuk **User Biasa (Pencari Kerja/Alumni)** dan **User Admin**:
-
-**Fitur User Biasa (Pencari Kerja / Alumni)**
-
-* **Autentikasi & Profil**
-* Registrasi & Login akun.
-* Kelola Data Diri (Upload foto profil, data pendidikan, dan berkas CV ke folder `public/uploads/`).
-
-
-* **Eksplorasi & Lamaran Kerja**
-* Membuka Halaman Landing BKK DOSQLA (`views/home.php`).
-* Melihat daftar lowongan pekerjaan (`views/jobs.php`).
-* Filter & Pencarian lowongan (berdasarkan kategori, tipe pekerjaan, atau lokasi).
-* Melamar pekerjaan dengan melampirkan CV yang telah diunggah.
-* Riwayat & Status Lamaran (Melihat status apakah lamaran Diterima, Ditolak, atau Diproses).
-
-
+**BKK DOSQLA** adalah platform Bursa Kerja Khusus berbasis web yang dirancang untuk mempermudah penghubungan antara lulusan/talenta muda berbakat dengan puluhan perusahaan mitra industri terkemuka. Platform ini menyediakan akses informasi lowongan kerja yang transparan, manajemen seleksi terpadu, serta pendampingan karir secara digital.
 
 ---
 
-**Fitur User Admin (Pengelola BKK)**
+## 🌟 Fitur Utama
 
-* **Manajemen Lowongan Kerja (CRUD Job)**
-* Menambah lowongan pekerjaan baru (Judul, Deskripsi, Kualifikasi, Tanggal Buka/Tutup).
-* Mengedit dan menghapus lowongan yang ada.
+### 👨‍🎓 Untuk Pelamar / Alumni
+* **Otentikasi Aman & Verifikasi OTP:** Sistem pendaftaran transparan menggunakan verifikasi OTP via Email.
+* **E-Profile & Resume:** Pengelolaan data pribadi, riwayat pendidikan, dan berkas lamaran secara terpusat.
+* **E-Job Fair & Live Search:** Pencarian lowongan kerja interaktif berdasarkan posisi dan perusahaan.
+* **Pelacakan Status Lamaran:** Pantau status seleksi lamaran secara *real-time*.
 
-
-* **Manajemen Pelamar & Lamaran**
-* Melihat daftar pelamar berdasarkan lowongan kerja.
-* Verifikasi & Download berkas CV/dokumen pelamar dari `public/uploads/`.
-* Mengubah status lamaran pelamar (Proses / Lolos / Tidak Lolos).
-
-
-* **Manajemen User**
-* Kelola akun user/alumni (Verifikasi akun baru, blokir akun, reset password).
-
-
-* **Laporan & Dashboard Mini**
-* Ringkasan statistik (Jumlah lowongan aktif, total pelamar, jumlah alumni yang terserap kerja).
-
-
+### 👨‍💼 Untuk Admin / Pengelola BKK
+* **Manajemen User & Pelamar:** Fitur aktivasi, nonaktifkan, hingga reset password pengguna.
+* **Manajemen Lowongan:** Tambah, edit, dan publikasikan lowongan kerja mitra industri.
+* **Manajemen Seleksi:** Verifikasi berkas pendaftar dan update status kelolosan kandidat.
 
 ---
 
-**Rekomendasi File Tambahan pada Struktur Project**
+## 🛠️ Teknologi & Arsitektur
 
-Untuk mendukung fitur-fitur di atas, Anda perlu menambahkan beberapa file view dan controller baru:
+Platform ini dibangun menggunakan arsitektur **MVC (Model-View-Controller)** murni tanpa framework berat untuk menjaga performa tetap cepat dan ringan.
 
-* **File View Tambahan (`app/views/`)**:
-* `app/views/auth/login.php` & `register.php` (Halaman Autentikasi)
-* `app/views/jobs/detail.php` (Detail Lowongan)
-* `app/views/admin/dashboard.php` (Dashboard Admin)
-* `app/views/admin/jobs_manage.php` (Kelola Job Admin)
-* `app/views/admin/applicants.php` (Daftar Pelamar Admin)
+* **Backend:** PHP (Custom Light MVC Architecture)
+* **Database:** MySQL / MariaDB
+* **Frontend:** HTML5, Modern CSS / Glassmorphism UI, Bootstrap 5, Bootstrap Icons
+* **Email Service:** PHPMailer / Native Mailer (OTP Verification)
+* **Environment:** XAMPP / Apache Web Server
 
+---
 
-* **File Model Tambahan (`app/models/`)**:
-* `app/models/Application.php` (Untuk menangani logika data lamaran kerja)
+## ⚙️ Panduan Instalasi Lokal
+
+Ikuti langkah-langkah ini untuk menjalankan proyek di lingkungan lokal kamu:
+
+### 1. Clone Repository
+```bash
+git clone [https://github.com/username/Bursa-Kerja-Khusus-Dosqla.git](https://github.com/username/Bursa-Kerja-Khusus-Dosqla.git)
