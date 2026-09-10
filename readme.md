@@ -1,6 +1,6 @@
 # 🚀 BKK DOSQLA - Bursa Kerja Khusus SMK Muhammadiyah Lemahabang
 
-![BKK DOSQLA Homepage Banner](ai.png)
+![BKK DOSQLA Homepage Banner](ai.PNG)
 
 **BKK DOSQLA** adalah platform Bursa Kerja Khusus berbasis web yang dirancang untuk mempermudah penghubungan antara lulusan/talenta muda berbakat dengan puluhan perusahaan mitra industri terkemuka. Platform ini menyediakan akses informasi lowongan kerja yang transparan, manajemen seleksi terpadu, serta pendampingan karir secara digital.
 
