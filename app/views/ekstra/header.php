@@ -206,7 +206,7 @@ $cleanUrl = strtolower(trim($rawUrl, '/'));
 
                 <!-- Navigasi Menu Pelamar -->
                 <div class="flex items-center space-x-2 sm:space-x-4 text-sm font-medium">
-                    <a href="<?= BASE_URL ?>jobs" class="<?= ($cleanUrl === 'jobs') ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Cari Lowongan</a>
+                    <a href="<?= BASE_URL ?>pelamar/job" class="<?= ($cleanUrl === 'jobs') ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Cari Lowongan</a>
                     <a href="<?= BASE_URL ?>pelamar" class="<?= ($cleanUrl === 'pelamar' || $cleanUrl === 'pelamar/index') ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Riwayat Lamaran</a>
                     <a href="<?= BASE_URL ?>pelamar/profile" class="<?= strpos($cleanUrl, 'profile') !== false ? 'bg-white/20 text-white font-bold' : 'hover:bg-white/10 text-white' ?> px-3 py-2 rounded-lg transition duration-150 no-underline">Profil Saya</a>
                     <a href="<?= BASE_URL ?>logout" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg transition duration-150 font-semibold shadow-md hover:shadow-lg ml-2 no-underline">

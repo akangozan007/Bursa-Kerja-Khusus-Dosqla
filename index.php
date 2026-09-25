@@ -70,11 +70,6 @@ if ($controllerSegment === 'admin') {
     $controllerName = 'AuthController';
     $method = 'home';
 
-} elseif ($controllerSegment === 'jobs' || $controllerSegment === 'job') {
-    // Route /jobs atau /job -> AuthController -> jobs()
-    $controllerName = 'AuthController';
-    $method = ($actionSegment === 'index' || empty($actionSegment)) ? 'jobs' : $actionSegment;
-
 } elseif ($controllerSegment === 'login') {
     // Alias route: /login -> AuthController -> index()
     $controllerName = 'AuthController';
@@ -94,7 +89,22 @@ if ($controllerSegment === 'admin') {
         $method = ($actionSegment === 'login' || $actionSegment === 'index') ? 'index' : $actionSegment;
     }
 
-} else {
+} elseif ($controllerSegment === 'pelamar' || $controllerSegment === 'applicant') {
+    $controllerName = 'PelamarController';
+    
+    // Jika URL-nya /pelamar/job, arahkan ke method job() di PelamarController
+    if ($actionSegment === 'job' || $actionSegment === 'jobs') {
+        $method = 'job';
+    } else {
+        $method = ($actionSegment === 'index' || empty($actionSegment)) ? 'index' : $actionSegment;
+    }
+
+// RUTE 2: /job atau /jobs (Publik - Tanpa Login)
+} elseif ($controllerSegment === 'jobs' || $controllerSegment === 'job') {
+    $controllerName = 'JobController';
+    $method = ($actionSegment === 'index' || empty($actionSegment)) ? 'index' : $actionSegment;
+}
+else {
     $controllerName = ucfirst($controllerSegment) . 'Controller';
     $method = $actionSegment;
 }

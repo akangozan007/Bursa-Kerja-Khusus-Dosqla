@@ -10,8 +10,14 @@ class PelamarController {
         $this->userModel = new User();
     }
 
-    // Dashboard Pelamar / Applicant
-    public function index() {
+    /**
+     * Helper privat untuk proteksi autentikasi pelamar
+     */
+    private function checkAuth() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if (!isset($_SESSION['user_id'])) {
             header('Location: ' . BASE_URL . 'auth');
             exit;
@@ -21,31 +27,72 @@ class PelamarController {
             header('Location: ' . BASE_URL . 'admin');
             exit;
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // AREA DASHBOARD INTERNAL (Menggunakan header.php / Internal Header)
+    // -------------------------------------------------------------------------
+
+    // Dashboard Pelamar (/pelamar)
+    public function index() {
+        $this->checkAuth();
+        $allowedRole = 'pelamar';
+        $pageTitle = 'Dashboard Pelamar - BKK DOSQLA';
+
+        // Load Header Internal Pelamar
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
 
         if (file_exists(ROOT_PATH . 'app/views/applicant/dashboard.php')) {
             require_once ROOT_PATH . 'app/views/applicant/dashboard.php';
         } else {
-            echo "File view <strong>app/views/applicant/dashboard.php</strong> belum tersedia.";
+            echo "<div class='container py-4'><div class='alert alert-danger'>File view <strong>app/views/applicant/dashboard.php</strong> belum tersedia.</div></div>";
+        }
+
+        // Load Footer Internal (jika ada)
+        if (file_exists(ROOT_PATH . 'app/views/ekstra/footer.php')) {
+            require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+        }
+    }
+
+  // Halaman Portal Lowongan Khusus Pelamar (/pelamar/job)
+    public function job() {
+        $this->checkAuth();
+        $allowedRole = 'pelamar';
+        $pageTitle = 'Portal Lowongan Kerja Pelamar';
+
+        require_once ROOT_PATH . 'app/models/job.php';
+        $jobModel = new Job();
+
+        $data['judul'] = $pageTitle;
+        $data['jobs']  = method_exists($jobModel, 'getAllJobs') ? $jobModel->getAllJobs() : [];
+
+        // Load Header Internal Dashboard
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
+
+        // Prioritaskan pemanggilan file applicant_jobs.php
+        if (file_exists(ROOT_PATH . 'app/views/applicant/applicant_jobs.php')) {
+            require_once ROOT_PATH . 'app/views/applicant/applicant_jobs.php';
+        } elseif (file_exists(ROOT_PATH . 'app/views/applicant/jobs.php')) {
+            require_once ROOT_PATH . 'app/views/applicant/jobs.php';
+        } else {
+            echo "<div class='container py-4'><div class='alert alert-danger'>File view lowongan pelamar belum tersedia.</div></div>";
+        }
+
+        // Load Footer Internal (opsional)
+        if (file_exists(ROOT_PATH . 'app/views/ekstra/footer.php')) {
+            require_once ROOT_PATH . 'app/views/ekstra/footer.php';
         }
     }
 
     // Halaman Profil Pelamar & Update Data (/pelamar/profile)
     public function profile() {
-        // 1. Validasi Autentikasi Login
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ' . BASE_URL . 'auth');
-            exit;
-        }
-
-        // 2. Akses Hanya Untuk Role Pelamar
-        if (isset($_SESSION['role']) && $_SESSION['role'] !== 'pelamar') {
-            header('Location: ' . BASE_URL . 'admin');
-            exit;
-        }
+        $this->checkAuth();
+        $allowedRole = 'pelamar';
+        $pageTitle = 'Profil Saya - BKK DOSQLA';
 
         $userId = $_SESSION['user_id'];
 
-        // 3. Proses Update Profil jika Form di-submit (POST)
+        // Proses Update Profil jika Form di-submit (POST)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateData = [
                 'user_id'             => $userId,
@@ -55,7 +102,6 @@ class PelamarController {
                 'pendidikan_terakhir' => trim(filter_input(INPUT_POST, 'pendidikan_terakhir', FILTER_SANITIZE_SPECIAL_CHARS))
             ];
 
-            // Panggil method update dari userModel
             if (method_exists($this->userModel, 'updateProfile') && $this->userModel->updateProfile($updateData)) {
                 $_SESSION['success'] = 'Profil berhasil diperbarui!';
             } else {
@@ -66,24 +112,41 @@ class PelamarController {
             exit;
         }
 
-        // 4. Ambil Data Profil User dari Model
         $pelamarData = method_exists($this->userModel, 'getProfileByUserId') 
             ? $this->userModel->getProfileByUserId($userId) 
             : [];
 
-        // 5. Muat View Profil
+        // Load Header Internal Pelamar
+        require_once ROOT_PATH . 'app/views/ekstra/header.php';
+
         if (file_exists(ROOT_PATH . 'app/views/applicant/profile.php')) {
             require_once ROOT_PATH . 'app/views/applicant/profile.php';
         } elseif (file_exists(ROOT_PATH . 'app/views/pelamar/profile.php')) {
             require_once ROOT_PATH . 'app/views/pelamar/profile.php';
         } else {
-            echo "File view <strong>profile.php</strong> belum tersedia.";
+            echo "<div class='container py-4'><div class='alert alert-danger'>File view <strong>profile.php</strong> belum tersedia.</div></div>";
+        }
+
+        if (file_exists(ROOT_PATH . 'app/views/ekstra/footer.php')) {
+            require_once ROOT_PATH . 'app/views/ekstra/footer.php';
         }
     }
 
+
+    // -------------------------------------------------------------------------
+    // AREA REGISTRASI & AUTH PUBLIK (Menggunakan header_public.php)
+    // -------------------------------------------------------------------------
+
     // Tampilkan Form Registrasi Pelamar (/pelamar/daftar)
     public function daftar() {
+        $data['title'] = 'Pendaftaran Pelamar - BKK DOSQLA';
+
+        // Load Header Publik untuk Tamu
+        require_once ROOT_PATH . 'app/views/header_public.php';
         require_once ROOT_PATH . 'app/views/auth/daftar.php';
+        if (file_exists(ROOT_PATH . 'app/views/ekstra/footer.php')) {
+            require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+        }
     }
 
     // Proses Form Registrasi Pelamar
@@ -137,13 +200,21 @@ class PelamarController {
         exit;
     }
 
-    // Halaman Form Input OTP
+    // Halaman Form Input OTP (/pelamar/otp)
     public function otp() {
         if (!isset($_SESSION['temp_user'])) {
             header('Location: ' . BASE_URL . 'pelamar/daftar');
             exit;
         }
+
+        $data['title'] = 'Verifikasi Kode OTP - BKK DOSQLA';
+
+        // Load Header Publik untuk OTP
+        require_once ROOT_PATH . 'app/views/header_public.php';
         require_once ROOT_PATH . 'app/views/auth/otp.php';
+        if (file_exists(ROOT_PATH . 'app/views/ekstra/footer.php')) {
+            require_once ROOT_PATH . 'app/views/ekstra/footer.php';
+        }
     }
 
     // Eksekusi Verifikasi OTP

@@ -1,5 +1,5 @@
 <?php
-require_once ROOT_PATH . 'app/models/Job.php';
+require_once ROOT_PATH . 'app/models/job.php';
 
 class JobController {
     private $jobModel;
@@ -8,17 +8,14 @@ class JobController {
         $this->jobModel = new Job();
     }
 
-    // Route: /job
+    // Route: /job (Bebas Akses)
     public function index() {
-        $pageTitle = 'Daftar Lowongan Kerja - BKK DOSQLA';
-        
-        // Ambil seluruh data lowongan publik
-        $jobs = $this->jobModel->getAllJobs();
+        $data['judul'] = 'Daftar Lowongan Kerja - BKK DOSQLA';
+        $data['jobs']  = $this->jobModel->getAllJobs();
 
-        // Load Header Publik / Polos (Tanpa Proteksi Auth)
+        // SELALU panggil header_public untuk area publik
         require_once ROOT_PATH . 'app/views/header_public.php';
         require_once ROOT_PATH . 'app/views/jobs.php';
         require_once ROOT_PATH . 'app/views/ekstra/footer.php';
     }
 }
-?>
